@@ -6,7 +6,8 @@ export class BaseScene implements IScene{
     width:number;
     height:number;
     container: PIXI.Container;
-
+    app:PIXI.Application;
+    
     constructor(){
         this.loader = PIXI.Loader.shared;
         this.container = new PIXI.Container();
@@ -28,9 +29,10 @@ export class BaseScene implements IScene{
         })
     }
 
-    init(width:number, height:number):void{
+    init(width:number, height:number, app:PIXI.Application):void{
         this.width = width;
         this.height = height;
+        this.app = app;
     }
 
     update(){

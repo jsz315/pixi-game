@@ -3,9 +3,7 @@
         <div class="title">{{name}}</div>
         <canvas class="canvas" ref="canvas"></canvas>
         <div class="btns">
-            <div class="btn" @click="show(0)">sprite中心点</div>
-            <div class="btn" @click="show(1)">container中心点</div>
-            <div class="btn" @click="show(2)">shape画图</div>
+            <div class="btn" @click="show(item)" v-for="(item, index) in list" v-bind:key="index">{{item.name}}</div>
         </div>
     </div>
 
@@ -14,34 +12,53 @@
 <script>
 import {Game} from '../../core/demo/Game'
 import {SpriteTest} from '../../core/demo/SpriteTest'
-import {ContainerTest} from '../../core/demo/ContainerTest'
+import {PositionTest} from '../../core/demo/PositionTest'
 import {ShapeTest} from '../../core/demo/ShapeTest'
+import {TextTest} from '../../core/demo/TextTest'
+import {DragTest} from '../../core/demo/DragTest'
+import {ScaleTest} from '../../core/demo/ScaleTest'
 
 let game;
 export default {
     data(){
         return {
-            name: 'game'
+            name: '',
+            list: [
+                {
+                    name: 'Sprite中心点',
+                    component: SpriteTest
+                },
+                {
+                    name: 'Position坐标转换',
+                    component: PositionTest
+                },
+                {
+                    name: 'Shape画图',
+                    component: ShapeTest
+                },
+                {
+                    name: 'Text文字',
+                    component: TextTest
+                },
+                {
+                    name: '拖动物体',
+                    component: DragTest
+                },
+                {
+                    name: '缩放物体',
+                    component: ScaleTest
+                },
+            ]
         }
     },
     mounted(){
         game = new Game(this.$refs.canvas);
-        this.show(2);
+        this.show(this.list[0]);
     },
     methods: {
-        show(type) {
-            switch(type){
-                case 0:
-                    game.reset(new SpriteTest);
-                    break;
-                case 1:
-                    game.reset(new ContainerTest);
-                    break;
-                case 2:
-                    game.reset(new ShapeTest);
-                    break;
-            }
-            
+        show(item) {
+            this.name = item.name;
+            game.reset(new item.component);
         },
     },
 }

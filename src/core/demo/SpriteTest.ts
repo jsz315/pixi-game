@@ -11,8 +11,8 @@ export class SpriteTest extends BaseScene{
         super();
     }   
 
-    init(width:number, height:number):void{
-        super.init(width, height);
+    init(width:number, height:number, app:PIXI.Application):void{
+        super.init(width, height, app);
         this.setup();
     }
     

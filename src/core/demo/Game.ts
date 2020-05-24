@@ -18,8 +18,8 @@ export class Game{
     }
 
     init(){
-        this.width = window.innerWidth;
-        this.height = window.innerWidth;
+        this.width = 750 || window.innerWidth * window.devicePixelRatio;
+        this.height = 750 || window.innerWidth * window.devicePixelRatio;
         this.app = new PIXI.Application({
             autoStart: true,
             width: this.width,
@@ -38,8 +38,8 @@ export class Game{
             this.scene.destory();
         }
         this.scene = scene;
-        this.scene.init(this.width, this.height);
         this.app.stage.addChild(this.scene.container);
+        this.scene.init(this.width, this.height, this.app);
     }
 
     destroy(){
