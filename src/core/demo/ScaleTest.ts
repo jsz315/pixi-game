@@ -48,8 +48,6 @@ export class ScaleTest extends BaseScene{
         this.container.addChild(this.box);
         this.container.addChild(this.txt);
 
-        console.log(this, 'con');
-
         this.container.interactive = true;
         this.container.on('pointerdown', this.onDragStart.bind(this));
         this.container.on('pointerup', this.onDragEnd, this);
@@ -101,7 +99,7 @@ export class ScaleTest extends BaseScene{
     }
 
     getDistance(a:any, b:any){
-        return Math.sqrt(Math.pow(a.clientX - b.clientX, 2) + Math.pow(a.clientY - b.clientY, 2));
+        return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
     }
 
     getCenter(a:any, b:any){
@@ -112,7 +110,7 @@ export class ScaleTest extends BaseScene{
     }
 
     onDragStart(e:any){
-        var ps = e.data.originalEvent.targetTouches;
+        // var ps = e.data.originalEvent.targetTouches;
         // console.log(e, e.data.originalEvent.changedTouches);
 
         // var s = new PIXI.interaction.InteractionData();
@@ -122,10 +120,11 @@ export class ScaleTest extends BaseScene{
         
         var local = e.data.getLocalPosition(this.box);
         this.dragging = true;
-        this.startPot = {x: local.x, y:local.y};
+        this.startPot = local;
 
         this.points.push({
             data: e.data.getLocalPosition(this.man),
+            global: e.data.global,
             id: e.data.identifier
         });
 
@@ -137,9 +136,10 @@ export class ScaleTest extends BaseScene{
     }
 
     onDragMove(e:any){
-        var ps = e.data.originalEvent.changedTouches;
-        if(ps.length == 2){
-            var size = this.getDistance(ps[0], ps[1]);
+        if(!this.dragging) return;
+        // var ps = e.data.originalEvent.changedTouches;
+        if(this.points.length == 2){
+            var size = this.getDistance(this.points[0].global, this.points[1].global);
             if(this.distance){
                 var width = this.man.width;
                 var height = this.man.height;
@@ -165,13 +165,19 @@ export class ScaleTest extends BaseScene{
             }
             else{
                 this.distance = size;
-                this.txt.text = "设置距离";
+                this.txt.text = "设置距离:" + size.toFixed(0);
             }
+        }
+        else{
+            var local = e.data.getLocalPosition(this.box);
+            this.man.x += local.x - this.startPot.x;
+            this.man.y += local.y - this.startPot.y;
+            this.startPot = local;
         }
     }
 
     onDragEnd(e:any){
-        this.points = this.points.filter(item=>item.id!=e.data.identifier);
+        this.points = this.points.filter(item => item.id != e.data.identifier);
         if(this.points.length != 2){
             this.distance = 0;
             this.dragging = false;

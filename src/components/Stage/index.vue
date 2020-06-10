@@ -17,6 +17,7 @@ import {ShapeTest} from '../../core/demo/ShapeTest'
 import {TextTest} from '../../core/demo/TextTest'
 import {DragTest} from '../../core/demo/DragTest'
 import {ScaleTest} from '../../core/demo/ScaleTest'
+import {BlendModeTest} from '../../core/demo/BlendModeTest'
 
 let game;
 export default {
@@ -47,6 +48,10 @@ export default {
                 {
                     name: '缩放物体',
                     component: ScaleTest
+                },
+                {
+                    name: '混合模式',
+                    component: BlendModeTest
                 },
             ]
         }

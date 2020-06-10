@@ -1,3 +1,4 @@
+const AddAssetHtmlPlugin = require('add-asset-html-webpack-plugin')
 const webpack = require('webpack')
 const path = require('path')
 
@@ -18,7 +19,17 @@ module.exports = {
       ]
     },
     plugins: [
-      
+        // new webpack.DllReferencePlugin({
+        //     context: __dirname,
+        //     manifest: path.join(__dirname, './public/dll/pixi.manifest.json')
+        // }),
+        // new AddAssetHtmlPlugin([
+        //     {
+        //         filepath: path.resolve(__dirname, './public/dll/*.js'),
+        //         outputPath: 'dll',
+        //         publicPath: 'dll'
+        //     }
+        // ])
     ]
   }
 }
