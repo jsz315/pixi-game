@@ -38,6 +38,7 @@ export class DragTest extends BaseScene{
         this.container.interactive = true;
 
         this.man.on('pointerdown', this.onDragStart.bind(this));
+        // this.man.blendMode = PIXI.BLEND_MODES.LIGHTEN;
     }
 
     addMan():PIXI.Sprite{

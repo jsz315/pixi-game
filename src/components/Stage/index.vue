@@ -18,6 +18,7 @@ import {TextTest} from '../../core/demo/TextTest'
 import {DragTest} from '../../core/demo/DragTest'
 import {ScaleTest} from '../../core/demo/ScaleTest'
 import {BlendModeTest} from '../../core/demo/BlendModeTest'
+import {ClipTest} from '../../core/demo/ClipTest'
 
 let game;
 export default {
@@ -25,6 +26,10 @@ export default {
         return {
             name: '',
             list: [
+                {
+                    name: '裁剪图片',
+                    component: ClipTest
+                },
                 {
                     name: 'Sprite中心点',
                     component: SpriteTest

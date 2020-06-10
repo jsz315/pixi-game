@@ -3,9 +3,7 @@ import { BaseScene } from './BaseScene';
 
 export class BlendModeTest extends BaseScene{
     
-    man1:PIXI.Sprite;
-    man2:PIXI.Sprite;
-    man3:PIXI.Sprite;
+    dragItem:PIXI.Sprite;
     url:string = 'man.jpg';
     box:PIXI.Container;
     dragging:boolean;
@@ -30,11 +28,18 @@ export class BlendModeTest extends BaseScene{
         var list = [
             PIXI.BLEND_MODES.ADD,
             PIXI.BLEND_MODES.COLOR,
-            PIXI.BLEND_MODES.DARKEN,
+            PIXI.BLEND_MODES.NORMAL,
             PIXI.BLEND_MODES.ERASE,
             PIXI.BLEND_MODES.DIFFERENCE,
             PIXI.BLEND_MODES.LIGHTEN,
-            PIXI.BLEND_MODES.XOR
+            PIXI.BLEND_MODES.XOR,
+            PIXI.BLEND_MODES.HARD_LIGHT,
+            PIXI.BLEND_MODES.DST_ATOP,
+            PIXI.BLEND_MODES.DST_IN,
+            PIXI.BLEND_MODES.DST_OUT,
+            PIXI.BLEND_MODES.DST_OVER,
+            PIXI.BLEND_MODES.HUE,
+            PIXI.BLEND_MODES.OVERLAY,
         ]
         for(var i = 0; i < list.length; i++){
             var man = this.addMan();
@@ -42,6 +47,8 @@ export class BlendModeTest extends BaseScene{
             man.y = Math.random() * 300;
             this.box.addChild(man);
             man.blendMode = list[i];
+            console.log("mode", list[i]);
+            man.on('pointerdown', this.onDragStart.bind(this));
         }
 
         this.box.x = 100;
@@ -76,34 +83,38 @@ export class BlendModeTest extends BaseScene{
         return graphics;
     }
 
-    // onDragStart(e:any){
-    //     console.log(e);
-    //     var local = e.data.getLocalPosition(this.box);
-    //     this.dragging = true;
-    //     this.startPot = {x: local.x, y:local.y};
+    onDragStart(e:any){
+        console.log(e);
+        var local = e.data.getLocalPosition(this.box);
+        this.dragging = true;
+        this.startPot = {x: local.x, y:local.y};
 
-    //     this.man.on('pointerup', this.onDragEnd, this);
-    //     this.man.on('pointerupoutside', this.onDragEnd, this);
-    //     this.man.on('pointermove', this.onDragMove, this);
-    // }
+        var man = e.target;
+        this.box.setChildIndex(man, this.box.children.length - 1);
+        man.on('pointerup', this.onDragEnd, this);
+        man.on('pointerupoutside', this.onDragEnd, this);
+        man.on('pointermove', this.onDragMove, this);
+        this.dragItem = man;
+    }
 
-    // onDragMove(e:any){
-    //     if(this.dragging){
-    //         var local = e.data.getLocalPosition(this.box);
-    //         this.man.x += local.x - this.startPot.x;
-    //         this.man.y += local.y - this.startPot.y;
-    //         this.startPot = {x: local.x, y:local.y};
-    //     }
-    // }
+    onDragMove(e:any){
+        if(this.dragging){
+            var local = e.data.getLocalPosition(this.box);
+            var man = this.dragItem;
+            man.x += local.x - this.startPot.x;
+            man.y += local.y - this.startPot.y;
+            this.startPot = {x: local.x, y:local.y};
+        }
+    }
 
-    // onDragEnd(e:any){
-    //     this.dragging = false;
-    //     console.log(this.container.getBounds());
-
-    //     this.man.off('pointerup', this.onDragEnd, this);
-    //     this.man.off('pointerupoutside', this.onDragEnd, this);
-    //     this.man.off('pointermove', this.onDragMove, this);
-    // }
+    onDragEnd(e:any){
+        this.dragging = false;
+        console.log(this.container.getBounds());
+        var man = this.dragItem;
+        man.off('pointerup', this.onDragEnd, this);
+        man.off('pointerupoutside', this.onDragEnd, this);
+        man.off('pointermove', this.onDragMove, this);
+    }
 
     update(){
         // if(this.man){
