@@ -5,6 +5,8 @@
         <div class="btns">
             <div class="btn" @click="show(item)" v-for="(item, index) in list" v-bind:key="index">{{item.name}}</div>
         </div>
+        <img v-if="src" :src="src" class="img">
+        <img src="hy.jpeg" class="img">
     </div>
 
 </template>
@@ -20,11 +22,14 @@ import {ScaleTest} from '../../core/demo/ScaleTest'
 import {BlendModeTest} from '../../core/demo/BlendModeTest'
 import {ClipTest} from '../../core/demo/ClipTest'
 
+import listener from '../../core/listener'
+
 let game;
 export default {
     data(){
         return {
             name: '',
+            src: '',
             list: [
                 {
                     name: '裁剪图片',
@@ -64,6 +69,10 @@ export default {
     mounted(){
         game = new Game(this.$refs.canvas);
         this.show(this.list[0]);
+        listener.on("draw", (data)=>{
+            console.log("draw");
+            this.src = data;
+        })
     },
     methods: {
         show(item) {

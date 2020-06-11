@@ -10,7 +10,7 @@ export class EditView extends PIXI.Container{
     frame:PIXI.Graphics;
     frameMask:PIXI.Graphics;
     pointers:Array<PIXI.Graphics>;
-    pointerSize:number = 20;
+    pointerSize:number = 40;
     pointerIndex:number;
 
     stageWidth:number;
@@ -21,7 +21,7 @@ export class EditView extends PIXI.Container{
     top:number;
     bottom:number;
 
-    padding:number = 30;
+    padding:number = 40;
 
     constructor(w:number, h:number){
         super();
@@ -36,7 +36,7 @@ export class EditView extends PIXI.Container{
         this.frame.interactive = true;
         this.addChild(this.frame);
 
-        this.frame.on('pointerdown', this.onDragStart.bind(this));
+        // this.frame.on('pointerdown', this.onDragStart.bind(this));
         
         this.pointers = [];
         for(var i:number = 0; i < 4; i++){
@@ -47,10 +47,10 @@ export class EditView extends PIXI.Container{
             p.on('pointerdown', this.onDragStart.bind(this));
         }
 
-        this.on('pointerdown', this.onDragStart.bind(this));
-        this.on('pointerup', this.onDragEnd, this);
-        this.on('pointerupoutside', this.onDragEnd, this);
-        this.on('pointermove', this.onDragMove, this);
+        // this.on('pointerdown', this.onDragStart.bind(this));
+        // this.on('pointerup', this.onDragEnd, this);
+        // this.on('pointerupoutside', this.onDragEnd, this);
+        // this.on('pointermove', this.onDragMove, this);
     }
 
     checkNearPointer(p:any){
@@ -69,6 +69,7 @@ export class EditView extends PIXI.Container{
 
     onDragStart(e:any){
         console.log(e);
+        e.stopPropagation();
         var local = e.data.getLocalPosition(this);
         this.dragging = true;
         this.startPot = {x: local.x, y:local.y};
@@ -205,7 +206,7 @@ export class EditView extends PIXI.Container{
 
         graphics = this.frameMask;
         graphics.clear();
-        graphics.beginFill(0x000000, 0.4);
+        graphics.beginFill(0x000000, 0.8);
         graphics.drawRect(0, 0, this.stageWidth, this.stageHeight);
         graphics.beginHole();
         graphics.drawRect(this.left, this.top, this.right - this.left, this.bottom - this.top);
