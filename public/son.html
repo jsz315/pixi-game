@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>编辑图片</title>
+</head>
+<body>
+    <div onclick="send()">传值</div>
+    <script>
+        var jsz = 100;
+        
+        window.addEventListener("message", e=>{
+            console.log("come from home");
+            console.log(e);
+        })
+
+        function send(){
+            postMessage(new Blob(["well"], {type: 'text/xml'}));
+        }
+    </script>
+</body>
+</html>

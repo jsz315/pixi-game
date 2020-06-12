@@ -1,16 +1,17 @@
 <template>
   <div id="app">
-    <Stage/>
+    <Clip/>
   </div>
 </template>
 
 <script>
 import Stage from './components/Stage'
+import Clip from './components/Clip'
 
 export default {
   name: 'App',
   components: {
-    Stage
+    Clip
   }
 }
 </script>

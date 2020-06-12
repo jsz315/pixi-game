@@ -39,7 +39,7 @@ export class EditView extends PIXI.Container{
         // this.frame.on('pointerdown', this.onDragStart.bind(this));
         
         this.pointers = [];
-        for(var i:number = 0; i < 4; i++){
+        for(var i:number = 0; i < 8; i++){
             var p: PIXI.Graphics = this.makePointer();
             p.interactive = true;
             this.pointers.push(p);
@@ -101,22 +101,41 @@ export class EditView extends PIXI.Container{
                 var man = this.dragItem;
                 man.x += ox;
                 man.y += oy;
-    
+                //左上
                 if(this.pointerIndex == 0){
                     this.left = local.x;
                     this.top = local.y;
                 }
+                //中上
                 else if(this.pointerIndex == 1){
+                    this.top = local.y;
+                }
+                //右上
+                else if(this.pointerIndex == 2){
                     this.right = local.x;
                     this.top = local.y;
                 }
-                else if(this.pointerIndex == 2){
+                //右中
+                else if(this.pointerIndex == 3){
+                    this.right = local.x;
+                }
+                //右下
+                else if(this.pointerIndex == 4){
+                    this.right = local.x;
+                    this.bottom = local.y;
+                }
+                //中下
+                else if(this.pointerIndex == 5){
+                    this.bottom = local.y;
+                }
+                //左下
+                else if(this.pointerIndex == 6){
                     this.left = local.x;
                     this.bottom = local.y;
                 }
-                else if(this.pointerIndex == 3){
-                    this.right = local.x;
-                    this.bottom = local.y;
+                //左中
+                else if(this.pointerIndex == 7){
+                    this.left = local.x;
                 }
             }
 
@@ -192,17 +211,38 @@ export class EditView extends PIXI.Container{
         graphics.endFill();
 
         var offset:number = this.pointerSize / 2;
+
+        //左上
         this.pointers[0].x = this.left - offset;
         this.pointers[0].y = this.top - offset;
 
-        this.pointers[1].x = this.right - offset;
+        //中上
+        this.pointers[1].x = (this.left + this.right) / 2 - offset;
         this.pointers[1].y = this.top - offset;
 
-        this.pointers[2].x = this.left - offset;
-        this.pointers[2].y = this.bottom - offset;
+        //右上
+        this.pointers[2].x = this.right - offset;
+        this.pointers[2].y = this.top - offset;
 
+        //右中
         this.pointers[3].x = this.right - offset;
-        this.pointers[3].y = this.bottom - offset;
+        this.pointers[3].y = (this.top + this.bottom) / 2 - offset;
+
+        //右下
+        this.pointers[4].x = this.right - offset;
+        this.pointers[4].y = this.bottom - offset;
+
+        //中下
+        this.pointers[5].x = (this.right + this.left) / 2 - offset;
+        this.pointers[5].y = this.bottom - offset;
+
+        //左下
+        this.pointers[6].x = this.left - offset;
+        this.pointers[6].y = this.bottom - offset;
+
+        //左中
+        this.pointers[7].x = this.left - offset;
+        this.pointers[7].y = (this.bottom + this.top) / 2 - offset;
 
         graphics = this.frameMask;
         graphics.clear();

@@ -1,0 +1,107 @@
+.stage{
+    .canvas{
+        width: 100%;
+    }
+    .clip-btns{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: fixed;
+        left: 0;
+        bottom: 1vw;
+        width: 100%;
+        background: #ffffff;
+        .btn{
+            display: flex;
+            width: 24vw;
+            margin: 2vw;
+            justify-content: center;
+            align-items: center;
+            color: #ffffff;
+            background: #069cff;
+            padding: 2vw;
+            cursor: pointer;
+            border-radius: 8vw;
+        }
+    }
+    .preview{
+        background: rgba(0, 0, 0, 0.72);
+        position: fixed;
+        left: 0;
+        top: 0;
+        z-index: 1;
+        width: 100%;
+        height: 100%;
+        justify-content: center;
+        align-items: center;
+        display: flex;
+        .box{
+            width: 80vw;
+            padding: 4vw;
+            border-radius: 1vw;
+            background: #ffffff;
+
+            .img-box{
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background: #a3a3a3;
+                .img{
+                    max-width: 100%;
+                    max-height: 50vh;
+                }
+            }
+
+            .info{
+                color: #a3a3a3;
+                padding-top: 1vw;
+                .tip{
+                    margin-top: 1vw;
+                }
+            }
+
+            .scale{
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                font-size: 12px;
+                padding: 3vw 0;
+                .size{
+                    background: #ececec;
+                    color: rgb(116, 116, 116);
+                    padding: 3px 5px;
+                    border-radius: 4px;
+                }
+                .selected{
+                    color: rgb(41, 155, 248);
+                    background: #bef0ff;
+                }
+            }
+            
+            .result-btns{
+                padding: 3vw 0 0;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                .btn{
+                    display: flex;
+                    width: 40%;
+                    justify-content: center;
+                    align-items: center;
+                    color: #808080;
+                    background: #dadada;
+                    border: solid 1px #b6b6b6;
+                    padding: 2vw;
+                    cursor: pointer;
+                    border-radius: 1vw;
+                }
+                .sure{
+                    background: #df0404;
+                    color: #ffffff;
+                    border-color: #960000;
+                }
+            }
+        }
+        
+    }
+}

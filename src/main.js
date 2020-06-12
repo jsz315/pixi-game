@@ -20,7 +20,7 @@ import App from './App.vue'
     document.body.appendChild(script);
 })();
 
-Vue.config.productionTip = false
+Vue.config.productionTip = false;
 
 new Vue({
   render: h => h(App),

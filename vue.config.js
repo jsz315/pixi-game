@@ -3,7 +3,7 @@ const webpack = require('webpack')
 const path = require('path')
 
 module.exports = {
-  publicPath: '',
+  publicPath: '.',
   configureWebpack: {
     devtool: process.env.NODE_ENV === "development" ? 'source-map' : 'eval-source-map',
     resolve: {
@@ -19,17 +19,17 @@ module.exports = {
       ]
     },
     plugins: [
-        // new webpack.DllReferencePlugin({
-        //     context: __dirname,
-        //     manifest: path.join(__dirname, './public/dll/pixi.manifest.json')
-        // }),
-        // new AddAssetHtmlPlugin([
-        //     {
-        //         filepath: path.resolve(__dirname, './public/dll/*.js'),
-        //         outputPath: 'dll',
-        //         publicPath: 'dll'
-        //     }
-        // ])
+        new webpack.DllReferencePlugin({
+            context: __dirname,
+            manifest: path.join(__dirname, './public/dll/pixi.manifest.json')
+        }),
+        new AddAssetHtmlPlugin([
+            {
+                filepath: path.resolve(__dirname, './public/dll/*.js'),
+                outputPath: 'dll',
+                publicPath: 'dll'
+            }
+        ])
     ]
   }
 }

@@ -5,13 +5,35 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
-    <title><%= htmlWebpackPlugin.options.title %></title>
+    <title>裁剪图片</title>
     <!-- <script src="https://cdn.jsdelivr.net/eruda/1.0.5/eruda.min.js"></script> -->
   </head>
   <body>
     <noscript>
       <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
     </noscript>
+
+    <script>
+        //使用方法
+        /*
+        let clipWindow;
+        window.onload = function(){
+            var f = document.getElementById("frame");
+            clipWindow = f.window || f.contentWindow;
+            clipWindow.addEventListener("message", e=>{
+                var obj = e.data;
+                if(obj.type == "clip"){
+                    console.log(obj);
+                }
+            })
+        }
+        
+        function send(){
+            clipWindow.postMessage({type:"url", data:"/hy.jpeg"});
+        }
+        */
+    </script>
+    
     <div id="app"></div>
     <!-- built files will be auto injected -->
   </body>
