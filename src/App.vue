@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import Stage from './components/Stage'
+// import Stage from './components/Stage'
 import Clip from './components/Clip'
 
 export default {

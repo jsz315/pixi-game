@@ -6,6 +6,7 @@
             <div class="btn" @click="fitHeight">适配高</div>
             <div class="clip btn" @click="clip">裁剪</div>
         </div>
+
         <div class="preview" v-if="preview">
             <div class="box">
                 <div class="img-box">
@@ -48,7 +49,7 @@ let game;
 export default {
     data(){
         return {
-            url: '',
+            url: './logo.png',
             preview: false,
             blob: null,
             info: null,
@@ -68,6 +69,7 @@ export default {
 
         window.addEventListener("message", e=>{
             var obj = e.data;
+            console.log("message url");
             if(obj.type == "url"){
                 listener.emit("url", obj.data);
             }

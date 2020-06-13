@@ -7,7 +7,6 @@ import { FileTooler } from '../tooler/FileTooler';
 
 export class ClipTest extends BaseScene{
 
-    url:string = '';
     man:PIXI.Sprite;
     dragging:boolean;
     startPot:any;
@@ -23,9 +22,20 @@ export class ClipTest extends BaseScene{
     init(width:number, height:number, app:PIXI.Application):void{
         super.init(width, height, app);
 
-        listener.on("url", (url:string)=>{
-            this.url = url;
-            this.setup();
+        listener.on("url", async (url:string)=>{
+            console.log("url", url);
+            var texture:any;
+            if(url.startsWith("http")){
+                await this.load(url);
+                texture = this.loader.resources[url].texture;
+            }
+            else{
+                texture = PIXI.Texture.from(url);
+            }
+            setTimeout(() => {
+                this.setup(texture);
+            }, 30);
+            
         })
         listener.on("clip", (scale:number)=>{
             this.onDraw(scale);
@@ -70,14 +80,15 @@ export class ClipTest extends BaseScene{
         this.editView.reset(l, r, t, b);
     }
     
-    async setup(){
-        await this.load(this.url);
-
-        this.man = new PIXI.Sprite(this.loader.resources[this.url].texture);
+    setup(texture:PIXI.Texture){
+        console.log("texture", texture);
+        this.man = new PIXI.Sprite(texture);
         this.man.interactive = true;
-        var w = this.man.texture.width;
-        var h = this.man.texture.height;
+        var w = texture.width;
+        var h = texture.height;
 
+        console.log(w, h, this.width, this.height);
+        this.man.anchor.set(0, 0);
         this.man.position.set(this.width / 2 - w / 2, this.height / 2 - h / 2);
         this.container.addChild(this.man);
 

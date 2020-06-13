@@ -34,6 +34,7 @@
 </head>
 <body>
     <div class="btn" onclick="send()">打开编辑页面</div>
+    <input type="file" id="file">打开文件</div>
     <iframe class="frame" id="frame" src="/"></iframe>
     <script>
         let clipWindow;
@@ -46,6 +47,19 @@
                     console.log(obj);
                 }
             })
+
+
+            var input = document.getElementById('file');
+            input.addEventListener('input', function(e){
+                console.log(e);
+                var url = URL.createObjectURL(e.target.files[0]);
+                clipWindow.postMessage({type:"url", data:url});
+                console.log(url);
+            }, false);
+        }
+
+        function choose(e){
+            console.log(e);
         }
         
         function send(){

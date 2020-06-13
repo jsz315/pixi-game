@@ -6,7 +6,6 @@
             <div class="btn" @click="show(item)" v-for="(item, index) in list" v-bind:key="index">{{item.name}}</div>
         </div>
         <img v-if="src" :src="src" class="img">
-        <img src="hy.jpeg" class="img">
     </div>
 
 </template>
@@ -21,6 +20,7 @@ import {DragTest} from '../../core/demo/DragTest'
 import {ScaleTest} from '../../core/demo/ScaleTest'
 import {BlendModeTest} from '../../core/demo/BlendModeTest'
 import {ClipTest} from '../../core/demo/ClipTest'
+import {TextureTest} from '../../core/demo/TextureTest'
 
 import listener from '../../core/listener'
 
@@ -31,6 +31,10 @@ export default {
             name: '',
             src: '',
             list: [
+                {
+                    name: '贴图',
+                    component: TextureTest
+                },
                 {
                     name: '裁剪图片',
                     component: ClipTest
