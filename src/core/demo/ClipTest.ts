@@ -121,7 +121,8 @@ export class ClipTest extends BaseScene{
         let urlData = canvas.toDataURL("image/jpeg", 0.9);
 
         var blob = FileTooler.dataURLtoBlob(urlData);
-        var url = FileTooler.blobToURL(blob);
+        // var url = FileTooler.blobToURL(blob);
+        var url = urlData;
         var info = {
             originSize: {
                 width: this.man.texture.width,
