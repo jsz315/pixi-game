@@ -9,6 +9,10 @@ module.exports = {
     resolve: {
       extensions: ['.ts'],
     },
+    externals : {
+        // 'PIXI': 'pixi.js',
+        'pixi.js': "PIXI"
+    },
     module: {
       rules: [
         {
@@ -19,17 +23,17 @@ module.exports = {
       ]
     },
     plugins: [
-        new webpack.DllReferencePlugin({
-            context: __dirname,
-            manifest: path.join(__dirname, './public/dll/pixi.manifest.json')
-        }),
-        new AddAssetHtmlPlugin([
-            {
-                filepath: path.resolve(__dirname, './public/dll/*.js'),
-                outputPath: 'dll',
-                publicPath: 'dll'
-            }
-        ])
+        // new webpack.DllReferencePlugin({
+        //     context: __dirname,
+        //     manifest: path.join(__dirname, './public/dll/pixi.manifest.json')
+        // }),
+        // new AddAssetHtmlPlugin([
+        //     {
+        //         filepath: path.resolve(__dirname, './public/dll/*.js'),
+        //         outputPath: 'dll',
+        //         publicPath: 'dll'
+        //     }
+        // ])
     ]
   }
 }
