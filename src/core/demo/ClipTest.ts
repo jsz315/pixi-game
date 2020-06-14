@@ -15,10 +15,19 @@ export class ClipTest extends BaseScene{
     line: PIXI.Graphics;
     canvas:HTMLCanvasElement;
     png:boolean;
+    times:number = 0;
 
     constructor(){
         super();
     }   
+
+    sleep(t:number){
+        return new Promise(resolve=>{
+            setTimeout(() => {
+                resolve();
+            }, t);
+        })
+    }
 
     async init(width:number, height:number, app:PIXI.Application){
         super.init(width, height, app);
@@ -37,9 +46,15 @@ export class ClipTest extends BaseScene{
             texture = PIXI.Texture.from(url);
         }
 
-        setTimeout(() => {
-            this.setup(texture);
-        }, 30);
+        this.times = 0;
+        while(++this.times < 30){
+            await this.sleep(30);
+            console.log("time" + this.times, texture.width);
+            if(texture.width > 10){
+                this.times = 30;
+            }
+        }
+        this.setup(texture);
 
         listener.on("clipStart", (scale:number)=>{
             this.onDraw(scale);
