@@ -14,30 +14,34 @@ export class ClipTest extends BaseScene{
     scaleTooler:ScaleTooler;
     line: PIXI.Graphics;
     canvas:HTMLCanvasElement;
+    png:boolean;
 
     constructor(){
         super();
     }   
 
-    init(width:number, height:number, app:PIXI.Application):void{
+    async init(width:number, height:number, app:PIXI.Application){
         super.init(width, height, app);
 
-        listener.on("url", async (url:string)=>{
-            console.log("url", url);
-            var texture:any;
-            if(url.startsWith("http")){
-                await this.load(url);
-                texture = this.loader.resources[url].texture;
-            }
-            else{
-                texture = PIXI.Texture.from(url);
-            }
-            setTimeout(() => {
-                this.setup(texture);
-            }, 30);
-            
-        })
-        listener.on("clip", (scale:number)=>{
+        var url = this.getQueryString("url");
+        console.log("裁剪图片", url);
+
+        this.png = false;
+        var texture:any;
+
+        if(url.startsWith("http")){
+            await this.load(url);
+            texture = this.loader.resources[url].texture;
+        }
+        else{
+            texture = PIXI.Texture.from(url);
+        }
+
+        setTimeout(() => {
+            this.setup(texture);
+        }, 30);
+
+        listener.on("clipStart", (scale:number)=>{
             this.onDraw(scale);
         })
         listener.on("fitWidth", ()=>{
@@ -46,6 +50,15 @@ export class ClipTest extends BaseScene{
         listener.on("fitHeight", ()=>{
             this.fitHeight();
         })
+    }
+
+    getQueryString(name:string):any {
+        var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
+        var r = window.location.search.substr(1).match(reg);
+        if (r != null) {
+          return unescape(r[2]);
+        }
+        return null;
     }
 
     fitWidth() {
@@ -81,13 +94,11 @@ export class ClipTest extends BaseScene{
     }
     
     setup(texture:PIXI.Texture){
-        console.log("texture", texture);
         this.man = new PIXI.Sprite(texture);
         this.man.interactive = true;
         var w = texture.width;
         var h = texture.height;
 
-        console.log(w, h, this.width, this.height);
         this.man.anchor.set(0, 0);
         this.man.position.set(this.width / 2 - w / 2, this.height / 2 - h / 2);
         this.container.addChild(this.man);
@@ -118,10 +129,15 @@ export class ClipTest extends BaseScene{
 
         let ctx:any = canvas.getContext('2d');
         ctx.drawImage(img.source, x / s, y / s, width / s, height / s, 0, 0, canvas.width, canvas.height);
-        let urlData = canvas.toDataURL("image/jpeg", 0.9);
+        let urlData;
+        if(this.png){
+            urlData = canvas.toDataURL("image/png");
+        }
+        else{
+            urlData = canvas.toDataURL("image/jpeg", 0.9);
+        }
 
         var blob = FileTooler.dataURLtoBlob(urlData);
-        // var url = FileTooler.blobToURL(blob);
         var url = urlData;
         var info = {
             originSize: {
@@ -134,7 +150,7 @@ export class ClipTest extends BaseScene{
             }
         };
 
-        listener.emit("draw", url, blob, info);
+        listener.emit("clipEnd", url, blob, info);
     }
     
     update(){

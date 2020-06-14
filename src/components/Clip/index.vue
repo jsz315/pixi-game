@@ -66,16 +66,8 @@ export default {
     mounted(){
         game = new Game(this.$refs.canvas);
         game.reset(new ClipTest);
-
-        window.addEventListener("message", e=>{
-            var obj = e.data;
-            console.log("message url");
-            if(obj.type == "url"){
-                listener.emit("url", obj.data);
-            }
-        })
         
-        listener.on("draw", (url, blob, info)=>{
+        listener.on("clipEnd", (url, blob, info)=>{
             this.preview = true;
             this.url = url;
             this.blob = blob;
@@ -88,24 +80,26 @@ export default {
         },
         sure(){
             this.preview = false;
-            window.postMessage({
-                type: "clip",
+            var data = {
+                type: "complete",
                 url: this.url,
                 blob: this.blob,
                 info: this.info
-            });
+            }
+            console.log("裁剪完成", data);
+            window.parent.postMessage(data);
         },
         changeSize(n){
             this.scaleId = n;
             if(this.scaleId == 1){
-                listener.emit("clip", this.scales[this.scaleId].value / this.info.clipSize.width);
+                listener.emit("clipStart", this.scales[this.scaleId].value / this.info.clipSize.width);
             }
             else{
-                listener.emit("clip", this.scales[this.scaleId].value);
+                listener.emit("clipStart", this.scales[this.scaleId].value);
             }
         },
         clip(){
-            listener.emit("clip", 1);
+            listener.emit("clipStart", 1);
         },
         fitWidth(){
             listener.emit("fitWidth");

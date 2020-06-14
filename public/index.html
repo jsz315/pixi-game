@@ -13,27 +13,20 @@
       <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
     </noscript>
 
-    <!-- <iframe class="frame" id="frame" src="/"></iframe> -->
+    <!-- <iframe class="frame" id="frame" src="about:blank"></iframe> -->
 
     <script>
-        //使用方法
-        /*
-        let clipWindow;
-        window.onload = function(){
-            var f = document.getElementById("frame");
-            clipWindow = f.window || f.contentWindow;
-            clipWindow.addEventListener("message", e=>{
-                var obj = e.data;
-                if(obj.type == "clip"){
-                    console.log(obj);
-                }
-            })
-        }
-        
-        function send(){
-            clipWindow.postMessage({type:"url", data:"/hy.jpeg"});
-        }
-        */
+        // //使用方法，传入图片地址或blob链接
+        // function clip(url){
+        //     var f = document.getElementById("frame");
+        //     f.src = "index.html?url=" + encodeURIComponent(url);
+        //     window.addEventListener("message", e=>{
+        //         var obj = e.data;
+        //         if(obj.type == "complete"){
+        //             console.log(obj);
+        //         }
+        //     })
+        // }
     </script>
     
     <div id="app"></div>

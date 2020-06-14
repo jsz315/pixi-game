@@ -29,7 +29,6 @@ export class Game{
         })
 
         this.app.renderer.backgroundColor = 0xf0f0f0;
-        console.log(this.app, "app");
         this.app.ticker.add(this.loop.bind(this));
     }
 
