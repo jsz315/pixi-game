@@ -56,7 +56,7 @@ export class EditView extends PIXI.Container{
     checkNearPointer(p:any){
         for(var i:number = 0; i < this.pointers.length; i++){
             var distance:number = this.getDistance(this.pointers[i], p);
-            if(distance < this.pointerSize){
+            if(distance < this.pointerSize * 2){
                 return i;
             }
         }

@@ -47,17 +47,17 @@ export class ScaleTooler{
                 var height = this.target.height;
                 var scale = this.target.scale.x;
                 if(size > this.distance){
-                    scale *= 1.04;
+                    scale *= 1.01;
                 }
                 else{
-                    scale *= 0.96;
+                    scale *= 0.99;
                 }
 
                 if(scale < 0.1){
                     scale = 0.1;
                 }
-                else if(scale > 2){
-                    scale = 2;
+                else if(scale > 2.4){
+                    scale = 2.4;
                 }
                 this.target.scale.set(scale, scale);
                 var ox = this.target.width - width;
