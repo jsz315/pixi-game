@@ -7,7 +7,7 @@ import { FileTooler } from '../tooler/FileTooler';
 
 export class ClipTest extends BaseScene{
 
-    man:PIXI.Sprite;
+    pic:PIXI.Sprite;
     dragging:boolean;
     startPot:any;
     editView:EditView;
@@ -78,62 +78,62 @@ export class ClipTest extends BaseScene{
 
     fitWidth() {
         var p = this.editView.padding;
-        var w = this.man.texture.width;
-        var h = this.man.texture.height;
+        var w = this.pic.texture.width;
+        var h = this.pic.texture.height;
         var s = (this.width - 2 * p) / w;
-        this.man.scale.set(s, s);
-        this.man.position.x = p;
-        this.man.position.y = this.height / 2 - (s * h) / 2;
+        this.pic.scale.set(s, s);
+        this.pic.position.x = p;
+        this.pic.position.y = this.height / 2 - (s * h) / 2;
 
         var l = p;
         var r = this.width - p;
-        var t = w > h ? this.man.position.y : p;
-        var b = w > h ? this.height - this.man.position.y : this.height - p;
+        var t = w > h ? this.pic.position.y : p;
+        var b = w > h ? this.height - this.pic.position.y : this.height - p;
         this.editView.reset(l, r, t, b);
     }
 
     fitHeight(){
         var p = this.editView.padding;
-        var w = this.man.texture.width;
-        var h = this.man.texture.height;
+        var w = this.pic.texture.width;
+        var h = this.pic.texture.height;
         var s = (this.height - 2 * p) / h;
-        this.man.scale.set(s, s);
-        this.man.position.x = this.width / 2 - (s * w) / 2;
-        this.man.position.y = p;
+        this.pic.scale.set(s, s);
+        this.pic.position.x = this.width / 2 - (s * w) / 2;
+        this.pic.position.y = p;
 
-        var l = w > h ? p : this.man.position.x;
-        var r =  w > h ? this.width - p : this.width - this.man.position.x;
+        var l = w > h ? p : this.pic.position.x;
+        var r =  w > h ? this.width - p : this.width - this.pic.position.x;
         var t = p;
         var b = this.height - p;
         this.editView.reset(l, r, t, b);
     }
     
     setup(texture:PIXI.Texture){
-        this.man = new PIXI.Sprite(texture);
-        this.man.interactive = true;
+        this.pic = new PIXI.Sprite(texture);
+        this.pic.interactive = true;
         var w = texture.width;
         var h = texture.height;
 
-        this.man.anchor.set(0, 0);
-        this.man.position.set(this.width / 2 - w / 2, this.height / 2 - h / 2);
-        this.container.addChild(this.man);
+        this.pic.anchor.set(0, 0);
+        this.pic.position.set(this.width / 2 - w / 2, this.height / 2 - h / 2);
+        this.container.addChild(this.pic);
 
         this.editView = new EditView(this.width,this.height);
         this.editView.reset(30, 720, 30, 720);
         this.container.addChild(this.editView);
 
-        this.scaleTooler = new ScaleTooler(this.editView, this.man);
+        this.scaleTooler = new ScaleTooler(this.editView, this.pic);
     }
 
     onDraw(scale:number){
 
-        var x = this.editView.left - this.man.x;
-        var y = this.editView.top - this.man.y;
+        var x = this.editView.left - this.pic.x;
+        var y = this.editView.top - this.pic.y;
         var width = this.editView.right - this.editView.left;
         var height = this.editView.bottom - this.editView.top;
-        var s = this.man.scale.x;
+        var s = this.pic.scale.x;
 
-        var img:any = this.man.texture.baseTexture.resource;
+        var img:any = this.pic.texture.baseTexture.resource;
 
         if(!this.canvas){
             this.canvas = document.createElement('canvas');
@@ -156,8 +156,8 @@ export class ClipTest extends BaseScene{
         var url = urlData;
         var info = {
             originSize: {
-                width: this.man.texture.width,
-                height: this.man.texture.height
+                width: this.pic.texture.width,
+                height: this.pic.texture.height
             },
             clipSize: {
                 width: canvas.width,
@@ -169,8 +169,8 @@ export class ClipTest extends BaseScene{
     }
     
     update(){
-        // if(this.man){
-        //     this.man.rotation += 0.04;
+        // if(this.pic){
+        //     this.pic.rotation += 0.04;
         // }
     }
 

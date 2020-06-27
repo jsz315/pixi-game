@@ -20,6 +20,8 @@ export class EditView extends PIXI.Container{
     right:number;
     top:number;
     bottom:number;
+    clipWidth:number;
+    clipHeight:number;
 
     padding:number = 40;
 
@@ -74,15 +76,33 @@ export class EditView extends PIXI.Container{
         this.dragging = true;
         this.startPot = {x: local.x, y:local.y};
 
-        var man = e.target;
+        var item = e.target;
         this.pointerIndex = this.checkNearPointer(local);
         console.log("this.pointerIndex", this.pointerIndex);
         
-        // this.box.setChildIndex(man, this.box.children.length - 1);
-        man.on('pointerup', this.onDragEnd, this);
-        man.on('pointerupoutside', this.onDragEnd, this);
-        man.on('pointermove', this.onDragMove, this);
-        this.dragItem = man;
+        // this.box.setChildIndex(item, this.box.children.length - 1);
+        item.on('pointerup', this.onDragEnd, this);
+        item.on('pointerupoutside', this.onDragEnd, this);
+        item.on('pointermove', this.onDragMove, this);
+        this.dragItem = item;
+    }
+
+    hitFrame(e:any){
+        var local = e.data.getLocalPosition(this);
+        if(local.x > this.left && local.x < this.right){
+            if(local.y > this.top && local.y < this.bottom){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    moveFrame(x:number, y:number){
+        this.left += x;
+        this.right += x;
+        this.top += y;
+        this.bottom += y;
+        this.update();
     }
 
     onDragMove(e:any){
@@ -98,9 +118,9 @@ export class EditView extends PIXI.Container{
                 this.bottom += oy;
             }
             else{
-                var man = this.dragItem;
-                man.x += ox;
-                man.y += oy;
+                var item = this.dragItem;
+                item.x += ox;
+                item.y += oy;
                 //左上
                 if(this.pointerIndex == 0){
                     this.left = local.x;
@@ -140,17 +160,18 @@ export class EditView extends PIXI.Container{
             }
 
             this.startPot = {x: local.x, y:local.y};
-
+            this.clipWidth = this.right - this.left;
+            this.clipHeight = this.bottom - this.top;
             this.update();
         }
     }
 
     onDragEnd(e:any){
         this.dragging = false;
-        var man = this.dragItem;
-        man.off('pointerup', this.onDragEnd, this);
-        man.off('pointerupoutside', this.onDragEnd, this);
-        man.off('pointermove', this.onDragMove, this);
+        var item = this.dragItem;
+        item.off('pointerup', this.onDragEnd, this);
+        item.off('pointerupoutside', this.onDragEnd, this);
+        item.off('pointermove', this.onDragMove, this);
     }
 
     makePointer(){
@@ -167,6 +188,8 @@ export class EditView extends PIXI.Container{
         this.right = r;
         this.top = t;
         this.bottom = b;
+        this.clipWidth = this.right - this.left;
+        this.clipHeight = this.bottom - this.top;
         this.update();
     }
 
@@ -175,28 +198,32 @@ export class EditView extends PIXI.Container{
 
         if(this.left < n){
             this.left = n;
+            this.right = this.left + this.clipWidth;
         }
-        else if(this.left > this.right - n){
-            this.left = this.right - n
-        }
+        // else if(this.left > this.right - n){
+        //     this.left = this.right - n;
+        // }
         if(this.right > this.stageWidth - n){
             this.right = this.stageWidth - n;
+            this.left = this.right - this.clipWidth;
         }
-        else if(this.right < this.left + n){
-            this.right = this.left + n;
-        }
+        // else if(this.right < this.left + n){
+        //     this.right = this.left + n;
+        // }
         if(this.top < n){
             this.top = n;
+            this.bottom = this.top + this.clipHeight;
         }
-        else if(this.top > this.bottom - n){
-            this.top = this.bottom - n;
-        }
+        // else if(this.top > this.bottom - n){
+        //     this.top = this.bottom - n;
+        // }
         if(this.bottom > this.stageHeight - n){
             this.bottom = this.stageHeight - n;
+            this.top = this.bottom - this.clipHeight;
         }
-        else if(this.bottom < this.top + n){
-            this.bottom = this.top + n;
-        }
+        // else if(this.bottom < this.top + n){
+        //     this.bottom = this.top + n;
+        // }
 
     }
 

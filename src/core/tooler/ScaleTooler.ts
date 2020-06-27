@@ -1,16 +1,18 @@
 import * as PIXI from 'pixi.js';
+import { EditView } from '../view/EditView';
 
 export class ScaleTooler{
 
-    container:PIXI.Container;
+    container:EditView;
     dragging:boolean;
     startPot:any;
     distance:number;
     center:any;
     points:any[] = [];
     target:PIXI.Sprite;
+    inFrame:Boolean;
 
-    constructor(container:PIXI.Container, target:PIXI.Sprite){
+    constructor(container:EditView, target:PIXI.Sprite){
         this.container = container;
         this.target = target;
 
@@ -27,6 +29,7 @@ export class ScaleTooler{
         this.dragging = true;
         this.startPot = local;
 
+        this.inFrame = this.container.hitFrame(e);
         this.points.push({
             data: e.data.getLocalPosition(this.container),
             global: e.data.global,
@@ -71,8 +74,14 @@ export class ScaleTooler{
         }
         else{
             var local = e.data.getLocalPosition(this.container);
-            this.target.x += local.x - this.startPot.x;
-            this.target.y += local.y - this.startPot.y;
+
+            if(this.inFrame){
+                this.container.moveFrame(local.x - this.startPot.x, local.y - this.startPot.y);
+            }
+            else{
+                this.target.x += local.x - this.startPot.x;
+                this.target.y += local.y - this.startPot.y;
+            }
             this.startPot = local;
         }
     }
