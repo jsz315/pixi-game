@@ -4,6 +4,18 @@ const path = require('path')
 
 module.exports = {
   publicPath: '.',
+  css: {
+    loaderOptions: {
+      css: {},
+      postcss: {
+        plugins: [
+          require('postcss-px2rem')({
+            remUnit: 75
+          })
+        ]
+      }
+    }
+  },
   configureWebpack: {
     devtool: process.env.NODE_ENV === "development" ? 'source-map' : 'eval-source-map',
     resolve: {

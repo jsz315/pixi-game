@@ -22,6 +22,7 @@
             padding: 2vw;
             cursor: pointer;
             border-radius: 8vw;
+            font-size: 32px;
         }
     }
     .preview{
@@ -35,6 +36,9 @@
         justify-content: center;
         align-items: center;
         display: flex;
+        animation: turn 200ms;
+        animation-fill-mode: forwards;
+        animation-timing-function: ease-in-out;
         .box{
             width: 80vw;
             padding: 4vw;
@@ -57,6 +61,7 @@
                 padding-top: 1vw;
                 .tip{
                     margin-top: 1vw;
+                    font-size: 28px;
                 }
             }
 
@@ -64,13 +69,13 @@
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                font-size: 12px;
                 padding: 3vw 0;
                 .size{
                     background: #ececec;
                     color: rgb(116, 116, 116);
-                    padding: 3px 5px;
+                    padding: 6px 10px;
                     border-radius: 4px;
+                    font-size: 24px;
                 }
                 .selected{
                     color: rgb(41, 155, 248);
@@ -94,6 +99,7 @@
                     padding: 2vw;
                     cursor: pointer;
                     border-radius: 1vw;
+                    font-size: 32px;
                 }
                 .sure{
                     background: #df0404;
@@ -104,4 +110,9 @@
         }
         
     }
+}
+
+@keyframes turn{
+    0%{opacity: 0; transform: scale(0.72)};
+    100%{opacity: 1; transform: scale(1);}
 }
