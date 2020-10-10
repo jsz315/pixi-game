@@ -8,21 +8,24 @@
         align-items: center;
         position: fixed;
         left: 0;
-        bottom: 1vw;
+        bottom: 20px;
         width: 100%;
         background: #ffffff;
         .btn{
             display: flex;
-            width: 24vw;
-            margin: 2vw;
+            width: 160px;
+            margin: 15px;
             justify-content: center;
             align-items: center;
             color: #ffffff;
             background: #069cff;
-            padding: 2vw;
+            padding: 20px;
             cursor: pointer;
-            border-radius: 8vw;
+            border-radius: 16px;
             font-size: 32px;
+        }
+        .btn:last-child{
+            background: #960000;
         }
     }
     .preview{
@@ -38,9 +41,9 @@
         display: flex;
         
         .box{
-            width: 80vw;
-            padding: 4vw;
-            border-radius: 1vw;
+            width: 600px;
+            padding: 30px;
+            border-radius: 4px;
             background: #ffffff;
             animation: turn 200ms;
             animation-fill-mode: forwards;
@@ -53,15 +56,15 @@
                 background: #a3a3a3;
                 .img{
                     max-width: 100%;
-                    max-height: 50vh;
+                    max-height: 600px;
                 }
             }
 
             .info{
                 color: #a3a3a3;
-                padding-top: 1vw;
+                padding: 12px 0;
                 .tip{
-                    margin-top: 1vw;
+                    margin-bottom: 8px;
                     font-size: 28px;
                 }
             }
@@ -70,11 +73,11 @@
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                padding: 3vw 0;
+                padding: 8px 0;
                 .size{
                     background: #ececec;
                     color: rgb(116, 116, 116);
-                    padding: 6px 10px;
+                    padding: 6px 16px;
                     border-radius: 4px;
                     font-size: 24px;
                 }
@@ -85,7 +88,7 @@
             }
             
             .result-btns{
-                padding: 3vw 0 0;
+                padding: 30px 0 0;
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
@@ -99,7 +102,7 @@
                     border: solid 1px #b6b6b6;
                     padding: 2vw;
                     cursor: pointer;
-                    border-radius: 1vw;
+                    border-radius: 16px;
                     font-size: 32px;
                 }
                 .sure{

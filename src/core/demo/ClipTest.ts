@@ -57,6 +57,7 @@ export class ClipTest extends BaseScene{
         this.setup(texture);
 
         listener.on("clipStart", (scale:number)=>{
+            console.log(scale, "scale");
             this.onDraw(scale);
         })
         listener.on("fitWidth", ()=>{

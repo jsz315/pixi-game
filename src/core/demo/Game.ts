@@ -25,7 +25,8 @@ export class Game{
             width: this.width,
             height: this.height,
             view: this.canvas,
-            antialias: true
+            antialias: true,
+            transparent: true
         })
 
         this.app.renderer.backgroundColor = 0xf0f0f0;

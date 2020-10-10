@@ -34,13 +34,13 @@
 
 <script>
 import {Game} from '../../core/demo/Game'
-import {SpriteTest} from '../../core/demo/SpriteTest'
-import {PositionTest} from '../../core/demo/PositionTest'
-import {ShapeTest} from '../../core/demo/ShapeTest'
-import {TextTest} from '../../core/demo/TextTest'
-import {DragTest} from '../../core/demo/DragTest'
-import {ScaleTest} from '../../core/demo/ScaleTest'
-import {BlendModeTest} from '../../core/demo/BlendModeTest'
+// import {SpriteTest} from '../../core/demo/SpriteTest'
+// import {PositionTest} from '../../core/demo/PositionTest'
+// import {ShapeTest} from '../../core/demo/ShapeTest'
+// import {TextTest} from '../../core/demo/TextTest'
+// import {DragTest} from '../../core/demo/DragTest'
+// import {ScaleTest} from '../../core/demo/ScaleTest'
+// import {BlendModeTest} from '../../core/demo/BlendModeTest'
 import {ClipTest} from '../../core/demo/ClipTest'
 
 import listener from '../../core/listener'
@@ -54,6 +54,8 @@ export default {
             blob: null,
             info: null,
             scaleId: 0,
+            clipWidth: 0,
+            clipHeight: 0,
             scales: [
                 {label: "无缩放", value: 1},
                 {label: "750px", value: 750},
@@ -72,6 +74,9 @@ export default {
             this.url = url;
             this.blob = blob;
             this.info = info;
+            console.log(info, "info");
+            this.clipWidth = info.clipSize.width;
+            this.clipHeight = info.clipSize.heigth;
         })
     },
     methods: {
@@ -92,7 +97,7 @@ export default {
         changeSize(n){
             this.scaleId = n;
             if(this.scaleId == 1){
-                listener.emit("clipStart", this.scales[this.scaleId].value / this.info.clipSize.width);
+                listener.emit("clipStart", this.scales[this.scaleId].value / this.clipWidth);
             }
             else{
                 listener.emit("clipStart", this.scales[this.scaleId].value);
