@@ -81,6 +81,7 @@ export class ScaleTooler{
             else{
                 this.target.x += local.x - this.startPot.x;
                 this.target.y += local.y - this.startPot.y;
+                console.log(this.target.x, "x")
             }
             this.startPot = local;
         }

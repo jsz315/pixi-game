@@ -4,6 +4,7 @@ import { EditView } from '../view/EditView';
 import { ScaleTooler } from '../tooler/ScaleTooler';
 import listener from '../listener'
 import { FileTooler } from '../tooler/FileTooler';
+import { createTrue } from 'typescript';
 
 export class ClipTest extends BaseScene{
 
@@ -35,7 +36,9 @@ export class ClipTest extends BaseScene{
         var url = this.getQueryString("url");
         console.log("裁剪图片", url);
 
-        this.png = false;
+        var res = await FileTooler.isPng(url);
+        console.log(res, 'png');
+        this.png = !!res;
         var texture:any;
 
         if(url.startsWith("http")){
@@ -125,7 +128,7 @@ export class ClipTest extends BaseScene{
 
         this.scaleTooler = new ScaleTooler(this.editView, this.pic);
     }
-
+    
     onDraw(scale:number){
 
         var x = this.editView.left - this.pic.x;
@@ -134,6 +137,7 @@ export class ClipTest extends BaseScene{
         var height = this.editView.bottom - this.editView.top;
         var s = this.pic.scale.x;
 
+        console.log(this.pic, "this.pic");
         var img:any = this.pic.texture.baseTexture.resource;
 
         if(!this.canvas){
@@ -150,7 +154,7 @@ export class ClipTest extends BaseScene{
             urlData = canvas.toDataURL("image/png");
         }
         else{
-            urlData = canvas.toDataURL("image/jpeg", 0.9);
+            urlData = canvas.toDataURL("image/jpeg", 0.8);
         }
 
         var blob = FileTooler.dataURLtoBlob(urlData);

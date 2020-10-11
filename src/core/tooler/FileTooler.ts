@@ -23,4 +23,61 @@ export class FileTooler{
         })
     }
 
+    static isPng(url:string){
+        return new Promise(resolve => {
+            var img = new Image();
+            img.onload = async function(e){
+                var canvas:any = document.createElement('canvas');
+                var ctx = canvas.getContext('2d');
+    
+                var w = Math.floor(img.width / 10);
+                var h = Math.floor(img.height / 10);
+               
+                canvas.width = w;
+                canvas.height = h;
+    
+                ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, w, h);
+                var imgData = ctx.getImageData(0, 0, w, h);
+                var png = false;
+                for(var i = 0; i < h; i++){
+                    var list = [];
+                    for(var j = 0; j < w; j++){
+                        var n = i * w * 4 + j * 4;
+                        if(imgData.data[n + 3] < 10){
+                            png = true;
+                            list.push(".");
+                        }
+                        else{
+                            list.push("m");
+                        }
+                    }
+                    console.log(list.join(""));
+                }
+                resolve(png);
+            }
+            img.src = url;
+        })
+        
+    }
+
+    static isPngFile(blob:any){
+        return new Promise(resolve => {
+            var file = new FileReader();
+            file.onload = function(e: any){
+                var s = new  Uint8Array(e.target.result);
+                var list = s.slice(0, 8);
+                if(list.join(",") == "137,80,78,71,13,10,26,10"){
+                    console.log("is png");
+                    resolve(true);
+                }
+                else{
+                    console.log("not png");
+                    resolve(false);
+                }
+            }
+            file.readAsArrayBuffer(blob);
+        })
+        
+    }
+
 }

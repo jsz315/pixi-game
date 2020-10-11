@@ -54,8 +54,8 @@ export default {
             blob: null,
             info: null,
             scaleId: 0,
-            clipWidth: 0,
-            clipHeight: 0,
+            // clipWidth: 0,
+            // clipHeight: 0,
             scales: [
                 {label: "无缩放", value: 1},
                 {label: "750px", value: 750},
@@ -75,8 +75,8 @@ export default {
             this.blob = blob;
             this.info = info;
             console.log(info, "info");
-            this.clipWidth = info.clipSize.width;
-            this.clipHeight = info.clipSize.heigth;
+            // this.clipWidth = info.clipSize.width;
+            // this.clipHeight = info.clipSize.heigth;
         })
     },
     methods: {
@@ -97,7 +97,7 @@ export default {
         changeSize(n){
             this.scaleId = n;
             if(this.scaleId == 1){
-                listener.emit("clipStart", this.scales[this.scaleId].value / this.clipWidth);
+                listener.emit("clipStart", this.scales[this.scaleId].value / this.info.originSize.width);
             }
             else{
                 listener.emit("clipStart", this.scales[this.scaleId].value);
