@@ -1,6 +1,9 @@
 <template>
     <div class="stage">
         <canvas class="canvas" ref="canvas"></canvas>
+        <div class="control">
+            <div class="ico"></div>
+        </div>
         <div class="clip-btns">
             <div class="btn" @click="fitWidth">适配宽</div>
             <div class="btn" @click="fitHeight">适配高</div>

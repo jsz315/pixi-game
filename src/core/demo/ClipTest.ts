@@ -130,11 +130,11 @@ export class ClipTest extends BaseScene{
     }
     
     onDraw(scale:number){
-
-        var x = this.editView.left - this.pic.x;
-        var y = this.editView.top - this.pic.y;
-        var width = this.editView.right - this.editView.left;
-        var height = this.editView.bottom - this.editView.top;
+        var {minX, maxX, minY, maxY} = this.editView.rect;
+        var x = minX - this.pic.x;
+        var y = minY - this.pic.y;
+        var width = maxX - minX;
+        var height = maxY - minY;
         var s = this.pic.scale.x;
 
         console.log(this.pic, "this.pic");
