@@ -2,11 +2,23 @@
     <div class="stage">
         <canvas class="canvas" ref="canvas"></canvas>
         <div class="control">
-            <div class="ico"></div>
+            <div class="btns">
+                <div class="box" @click="onChange('fitWidth')"><div class="ico size width"></div></div>
+                <div class="box" @click="onChange('fitHeight')"><div class="ico size height"></div></div>
+            </div>
+
+            <div class="btns">
+                <div class="box" @click="onChange('rotateLeft')"><div class="ico rotate left"></div></div>
+                <div class="box" @click="onChange('rotateRight')"><div class="ico rotate right"></div></div>
+            </div>
+
+            <div class="btns">
+                <div class="box" @click="onChange('turnX')"><div class="ico turn x"></div></div>
+                <div class="box" @click="onChange('turnY')"><div class="ico turn y"></div></div>
+            </div>
+            
         </div>
         <div class="clip-btns">
-            <div class="btn" @click="fitWidth">适配宽</div>
-            <div class="btn" @click="fitHeight">适配高</div>
             <div class="clip btn" @click="clip">裁剪</div>
         </div>
 
@@ -78,8 +90,6 @@ export default {
             this.blob = blob;
             this.info = info;
             console.log(info, "info");
-            // this.clipWidth = info.clipSize.width;
-            // this.clipHeight = info.clipSize.heigth;
         })
     },
     methods: {
@@ -109,11 +119,8 @@ export default {
         clip(){
             listener.emit("clipStart", 1);
         },
-        fitWidth(){
-            listener.emit("fitWidth");
-        },
-        fitHeight(){
-            listener.emit("fitHeight");
+        onChange(type){
+            listener.emit("transform", type);
         }
     },
 }

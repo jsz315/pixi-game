@@ -10,10 +10,50 @@
         left: 0;
         bottom: 160px;
         width: 100%;
+        .btns{
+            margin: 0 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            border-radius: 12px;
+            .box{
+                flex: 1;
+                padding: 10px 20px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background-color: #069cff;
+                &:first-child{
+                    border-right: 2px solid #ffffff;
+                }
+            }
+        }
         .ico{
-            width: 80px;
-            height: 30px;
-            background: #069cff;
+            width: 40px;
+            height: 40px;
+            background-color: #069cff;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 100% 100%;
+            &.size{
+                background-image: url("../../assets/size.png");
+                &.width{
+                    transform: rotate(90deg);
+                }
+            }
+            &.rotate{
+                background-image: url("../../assets/rotate.png");
+                &.right{
+                    transform: scaleX(-1);
+                }
+            }
+            &.turn{
+                background-image: url("../../assets/turn.png");
+                &.y{
+                    transform: rotate(90deg);
+                }
+            }
         }
     }
     .clip-btns{

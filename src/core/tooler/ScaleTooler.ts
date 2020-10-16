@@ -9,10 +9,12 @@ export class ScaleTooler{
     distance:number;
     center:any;
     points:any[] = [];
-    target:PIXI.Sprite;
+    target:PIXI.Graphics;
     inFrame:Boolean;
+    texture:PIXI.Texture
 
-    constructor(container:EditView, target:PIXI.Sprite){
+    constructor(container:EditView, target:PIXI.Graphics, texture:PIXI.Texture){
+        this.texture = texture;
         this.container = container;
         this.target = target;
 
@@ -65,8 +67,8 @@ export class ScaleTooler{
                 this.target.scale.set(scale, scale);
                 var ox = this.target.width - width;
                 var oy = this.target.height - height;
-                this.target.x -= ox * this.center.x / this.target.texture.width;
-                this.target.y -= oy * this.center.y / this.target.texture.height;
+                this.target.x -= ox * this.center.x / this.texture.width;
+                this.target.y -= oy * this.center.y / this.texture.height;
             }
             else{
                 this.distance = size;
