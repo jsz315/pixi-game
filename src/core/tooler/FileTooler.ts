@@ -1,3 +1,5 @@
+import { resolveModuleName } from "typescript";
+
 export class FileTooler{
 
     static dataURLtoBlob(dataurl:string) {
@@ -21,6 +23,114 @@ export class FileTooler{
             }
             a.readAsDataURL(blob);
         })
+    }
+
+    static getUrlCanvas(url:string){
+        return new Promise(resolve => {
+            var img = new Image();
+            img.onload = async function(e){
+                var canvas:HTMLCanvasElement = document.createElement('canvas');
+                var ctx = canvas.getContext('2d');
+                ctx?.save();
+                canvas.width = img.width;
+                canvas.height = img.height;
+                ctx?.drawImage(img, 0, 0);
+                ctx?.restore();
+
+                document.body.appendChild(canvas);
+                setTimeout(() => {
+                    resolve(canvas);
+                }, 30);
+            }
+            img.src = url;
+        })
+    }
+
+    static getRotateCanvas(img:HTMLCanvasElement, angle:number){
+        return new Promise(resolve => {
+            var canvas:HTMLCanvasElement = document.createElement('canvas');
+            var ctx = canvas.getContext('2d');
+            ctx?.save();
+            if(angle == 90 || angle == -90){
+                canvas.width = img.height;
+                canvas.height = img.width;
+                
+                ctx?.translate(canvas.width / 2, canvas.height / 2);
+                ctx?.rotate(angle * Math.PI / 180);
+                ctx?.drawImage(img, -img.width / 2, -img.height / 2);
+                
+            }
+            else{
+                canvas.width = img.width;
+                canvas.height = img.height;
+
+                ctx?.translate(img.width / 2, img.height / 2);
+                ctx?.rotate(angle * Math.PI / 180);
+                ctx?.drawImage(img, -img.width / 2, -img.height / 2);
+            }
+            ctx?.restore();
+            setTimeout(() => {
+                resolve(canvas);
+            }, 30);
+        })
+
+        // var ctx = canvas.getContext('2d');
+        // ctx?.save();
+        // console.log(angle, "angler");
+        // if(angle == 90 || angle == -90){
+        //     var cw = canvas.width;
+        //     var ch = canvas.height;
+        //     canvas.width = ch;
+        //     canvas.height = cw;
+            
+        //     ctx?.translate(ch, 0);
+        //     ctx?.rotate(angle * Math.PI / 180);
+        //     ctx?.drawImage(canvas, 0, 0);
+            
+        // }
+        // else{
+            
+        //     ctx?.translate(canvas.width / 2, canvas.height / 2);
+        //     ctx?.rotate(angle * Math.PI / 180);
+        //     ctx?.drawImage(canvas, -canvas.width / 2, -canvas.height / 2);
+        // }
+        // ctx?.restore();
+    }
+
+    static scaleCanvas(canvas:HTMLCanvasElement, x:number, y:number){
+        var ctx = canvas.getContext('2d');
+        ctx?.save();
+        ctx?.scale(x, y);
+        ctx?.drawImage(canvas, 0, 0, x * canvas.width, y* canvas.height);
+        ctx?.restore();
+    }
+
+    static getCanvas(url:string, angle:number){
+        var img = new Image();
+        img.onload = async function(e){
+            var canvas:HTMLCanvasElement = document.createElement('canvas');
+            var ctx = canvas.getContext('2d');
+            ctx?.save();
+            if(angle == 90 || angle == -90){
+                canvas.width = img.height;
+                canvas.height = img.width;
+                
+                ctx?.translate(canvas.width / 2, canvas.height / 2);
+                ctx?.rotate(angle * Math.PI / 180);
+                ctx?.drawImage(img, -img.width / 2, -img.height / 2);
+                
+            }
+            else{
+                canvas.width = img.width;
+                canvas.height = img.height;
+
+                ctx?.translate(img.width / 2, img.height / 2);
+                ctx?.rotate(angle * Math.PI / 180);
+                ctx?.drawImage(img, -img.width / 2, -img.height / 2);
+            }
+            ctx?.restore();
+        }
+        img.src = url;
     }
 
     static isPng(url:string){

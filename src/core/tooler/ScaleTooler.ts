@@ -9,11 +9,11 @@ export class ScaleTooler{
     distance:number;
     center:any;
     points:any[] = [];
-    target:PIXI.Graphics;
+    target:PIXI.Sprite;
     inFrame:Boolean;
     texture:PIXI.Texture
 
-    constructor(container:EditView, target:PIXI.Graphics, texture:PIXI.Texture){
+    constructor(container:EditView, target:PIXI.Sprite, texture:PIXI.Texture){
         this.texture = texture;
         this.container = container;
         this.target = target;
