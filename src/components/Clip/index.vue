@@ -1,6 +1,7 @@
 <template>
     <div class="stage">
-        <canvas class="canvas" ref="canvas"></canvas>
+        <div class="bg" :style="style"></div>
+        <canvas class="canvas" :class="{hide}" ref="canvas"></canvas>
         <div class="control">
             <div class="btns">
                 <div class="box" @click="onChange('fitWidth')"><div class="ico size width"></div></div>
@@ -19,6 +20,7 @@
             
         </div>
         <div class="clip-btns">
+            <div class="clip btn" @click="pre">预处理</div>
             <div class="clip btn" @click="clip">裁剪</div>
         </div>
 
@@ -64,6 +66,7 @@ let game;
 export default {
     data(){
         return {
+            hide: false,
             url: './logo.png',
             preview: false,
             blob: null,
@@ -77,7 +80,8 @@ export default {
                 {label: "30%", value: 0.3},
                 {label: "50%", value: 0.5},
                 {label: "70%", value: 0.7}
-            ]
+            ],
+            style: {}
         }
     },
     mounted(){
@@ -93,6 +97,14 @@ export default {
         })
     },
     methods: {
+        getQueryString(name) {
+            var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
+            var r = window.location.search.substr(1).match(reg);
+            if (r != null) {
+            return unescape(r[2]);
+            }
+            return null;
+        },
         quit(){
             this.preview = false;
         },
@@ -121,6 +133,18 @@ export default {
         },
         onChange(type){
             listener.emit("transform", type);
+        },
+        pre(){
+            listener.emit("pre", true);
+            this.hide = true;
+            var url = this.getQueryString("url");
+            this.style = {
+                background: "url(" + url + ")",
+                width: '690px',
+                height: '690px',
+                top: '40px',
+                left: '40px'
+            }
         }
     },
 }

@@ -1,9 +1,8 @@
 import * as PIXI from 'pixi.js';
 
-export class EditView extends PIXI.Container{
+export default class FrameView extends PIXI.Container{
     
     dragItem:PIXI.Graphics;
-    url:string = 'man.jpg';
     dragging:boolean;
     startPot:any;
 
@@ -198,11 +197,11 @@ export class EditView extends PIXI.Container{
         item.off('pointerup', this.onDragEnd, this);
         item.off('pointerupoutside', this.onDragEnd, this);
         item.off('pointermove', this.onDragMove, this);
+        console.log(this.stageWidth, this.stageHeight);
     }
 
     makePointer(){
         var graphics = new PIXI.Graphics();
-        // graphics.lineStyle(1, 0xffffff);
         graphics.beginFill(0x069cff, 1);
         graphics.drawRect(0, 0, this.pointerSize, this.pointerSize);
         graphics.endFill();
@@ -231,7 +230,8 @@ export class EditView extends PIXI.Container{
         var graphics = this.frame;
         graphics.clear();
         graphics.lineStyle(1, 0x069cff);
-        graphics.beginFill(0xffffff, 0.03);
+        //透明层，用来交互
+        graphics.beginFill(0xffffff, 0.04);
         graphics.drawRect(left, top, right - left, bottom - top);
         graphics.endFill();
 

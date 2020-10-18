@@ -1,6 +1,19 @@
 .stage{
+    
+    position: relative;
     .canvas{
         width: 100%;
+        position: relative;
+        z-index: 1;
+        &.hide{
+            opacity: 0.36;
+        }
+    }
+    .bg{
+        background-repeat: no-repeat;
+        position: absolute;
+        left: 0;
+        top: 0;
     }
     .control{
         display: flex;

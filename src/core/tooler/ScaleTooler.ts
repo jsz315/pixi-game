@@ -1,39 +1,37 @@
 import * as PIXI from 'pixi.js';
-import { EditView } from '../view/EditView';
+import FrameView from '../view/FrameView';
 
-export class ScaleTooler{
+export default class ScaleTooler{
 
-    container:EditView;
+    frameView:FrameView;
     dragging:boolean;
     startPot:any;
     distance:number;
     center:any;
     points:any[] = [];
-    target:PIXI.Graphics;
+    target:PIXI.Sprite;
     inFrame:Boolean;
-    texture:PIXI.Texture
 
-    constructor(container:EditView, target:PIXI.Graphics, texture:PIXI.Texture){
-        this.texture = texture;
-        this.container = container;
+    constructor(frameView:FrameView, target:PIXI.Sprite){
+        this.frameView = frameView;
         this.target = target;
 
-        this.container.interactive = true;
-        this.container.on('pointerdown', this.onDragStart.bind(this));
-        this.container.on('pointerup', this.onDragEnd, this);
-        this.container.on('pointerupoutside', this.onDragEnd, this);
-        this.container.on('pointermove', this.onDragMove, this);
+        this.frameView.interactive = true;
+        this.frameView.on('pointerdown', this.onDragStart.bind(this));
+        this.frameView.on('pointerup', this.onDragEnd, this);
+        this.frameView.on('pointerupoutside', this.onDragEnd, this);
+        this.frameView.on('pointermove', this.onDragMove, this);
     }
 
 
     onDragStart(e:any){
-        var local = e.data.getLocalPosition(this.container);
+        var local = e.data.getLocalPosition(this.frameView);
         this.dragging = true;
         this.startPot = local;
 
-        this.inFrame = this.container.hitFrame(e);
+        this.inFrame = this.frameView.hitFrame(e);
         this.points.push({
-            data: e.data.getLocalPosition(this.container),
+            data: e.data.getLocalPosition(this.frameView),
             global: e.data.global,
             id: e.data.identifier
         });
@@ -67,18 +65,18 @@ export class ScaleTooler{
                 this.target.scale.set(scale, scale);
                 var ox = this.target.width - width;
                 var oy = this.target.height - height;
-                this.target.x -= ox * this.center.x / this.texture.width;
-                this.target.y -= oy * this.center.y / this.texture.height;
+                this.target.x -= ox * this.center.x / this.target.texture.width;
+                this.target.y -= oy * this.center.y / this.target.texture.height;
             }
             else{
                 this.distance = size;
             }
         }
         else{
-            var local = e.data.getLocalPosition(this.container);
+            var local = e.data.getLocalPosition(this.frameView);
 
             if(this.inFrame){
-                this.container.moveFrame(local.x - this.startPot.x, local.y - this.startPot.y);
+                this.frameView.moveFrame(local.x - this.startPot.x, local.y - this.startPot.y);
             }
             else{
                 this.target.x += local.x - this.startPot.x;
