@@ -47,7 +47,7 @@ export default class FrameView extends PIXI.Container{
         }
 
         listener.on("pre-scale", (horizontal:boolean) => {
-            var size = (w - 2 * this.padding) / 4;
+            var size = (w - 2 * this.padding) / 2.4;
             if(horizontal){
                 this.reset(this.padding, w - this.padding, size, h - size);
             }

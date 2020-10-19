@@ -72,7 +72,6 @@ export class ClipTest extends BaseScene{
             }
             else{
                 this.pic.visible = true;
-                this.fitWidth();
             }
         });
 
@@ -100,7 +99,7 @@ export class ClipTest extends BaseScene{
             this.imgCanvas = div;
             this.texture = PIXI.Texture.from(this.imgCanvas);
             this.pic.texture = this.texture;
-            if(this.texture.width > this.texture.height){
+            if(w > h){
                 this.fitWidth();
             }
             else{
