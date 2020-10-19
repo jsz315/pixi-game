@@ -1,10 +1,11 @@
 import * as PIXI from 'pixi.js';
 import { BaseScene } from './BaseScene';
-import { EditView } from '../view/EditView';
-import { ScaleTooler } from '../tooler/ScaleTooler';
+import FrameView from '../view/FrameView';
+import ScaleTooler from '../tooler/ScaleTooler';
 import listener from '../listener'
 import { FileTooler } from '../tooler/FileTooler';
 import { createTrue } from 'typescript';
+import CanvasTooler from '../tooler/CanvasTooler';
 
 export class ClipTest extends BaseScene{
 
@@ -12,13 +13,15 @@ export class ClipTest extends BaseScene{
     texture:PIXI.Texture;
     dragging:boolean;
     startPot:any;
-    editView:EditView;
+    frameView:FrameView;
     scaleTooler:ScaleTooler;
     line: PIXI.Graphics;
     canvas:HTMLCanvasElement;
     png:boolean;
     times:number = 0;
     rotation:number = 0;
+
+    imgCanvas:any;
 
     constructor(){
         super();
@@ -51,25 +54,7 @@ export class ClipTest extends BaseScene{
             texture = PIXI.Texture.from(url);
         }
 
-        var cs:any = await FileTooler.getUrlCanvas(url);
-        // setTimeout(()=>{
-        //     FileTooler.scaleCanvas(cs, 1, -1);
-        // }, 3000)
-
-        // setTimeout(()=>{
-        //     FileTooler.scaleCanvas(cs, 1, -1);
-        // }, 6000)
-
-        setTimeout(async ()=>{
-            cs = await FileTooler.getRotateCanvas(cs, 90);
-            document.body.appendChild(cs);
-        }, 3000)
-
-        setTimeout(async ()=>{
-            cs = await FileTooler.getRotateCanvas(cs, 90);
-            document.body.appendChild(cs);
-        }, 6000)
-        
+        this.imgCanvas = await CanvasTooler.getCanvasByUrl(url);
 
         this.times = 0;
         while(++this.times < 30){
@@ -80,6 +65,49 @@ export class ClipTest extends BaseScene{
             }
         }
         this.setup(texture);
+
+        listener.on("preStart", (v:boolean) => {
+            if(v){
+                this.pic.visible = false;
+            }
+            else{
+                this.pic.visible = true;
+                this.fitWidth();
+            }
+        });
+
+        listener.on("preClip", (rect:any) => {
+            var {left, top, width, height, padding, img} = rect;
+            console.log(rect, "rect");
+            console.log(this.frameView.rect, "this.frameView.rect");
+            var {maxX, maxY, minX, minY} = this.frameView.rect;
+
+            var scale;
+            if(width > height){
+                scale = img.width / width;
+            }
+            else{
+                scale = img.height / height;
+            }
+
+            var x = (minX - left) * scale;
+            var y = (minY - top) * scale;
+            var w = (maxX - minX) * scale;
+            var h = (maxY - minY) * scale;
+
+            var div = FileTooler.getClipImage(img, x, y, w, h);
+            // document.body.appendChild(div);
+            this.imgCanvas = div;
+            this.texture = PIXI.Texture.from(this.imgCanvas);
+            this.pic.texture = this.texture;
+            if(this.texture.width > this.texture.height){
+                this.fitWidth();
+            }
+            else{
+                this.fitHeight();
+            }
+
+        })
 
         listener.on("clipStart", (scale:number)=>{
             console.log(scale, "scale");
@@ -124,9 +152,9 @@ export class ClipTest extends BaseScene{
     }
 
     fitWidth() {
-        var p = this.editView.padding;
-        var w = this.pic.texture.width;
-        var h = this.pic.texture.height;
+        var p = this.frameView.padding;
+        var w = this.texture.width;
+        var h = this.texture.height;
         var s = (this.width - 2 * p) / w;
         this.pic.scale.set(s, s);
         this.pic.position.x = p;
@@ -136,13 +164,13 @@ export class ClipTest extends BaseScene{
         var r = this.width - p;
         var t = w > h ? this.pic.position.y : p;
         var b = w > h ? this.height - this.pic.position.y : this.height - p;
-        this.editView.reset(l, r, t, b);
+        this.frameView.reset(l, r, t, b);
     }
 
     fitHeight(){
-        var p = this.editView.padding;
-        var w = this.pic.texture.width;
-        var h = this.pic.texture.height;
+        var p = this.frameView.padding;
+        var w = this.texture.width;
+        var h = this.texture.height;
         var s = (this.height - 2 * p) / h;
         this.pic.scale.set(s, s);
         this.pic.position.x = this.width / 2 - (s * w) / 2;
@@ -152,118 +180,66 @@ export class ClipTest extends BaseScene{
         var r =  w > h ? this.width - p : this.width - this.pic.position.x;
         var t = p;
         var b = this.height - p;
-        this.editView.reset(l, r, t, b);
-    }
-
-    rotate(){
-        var sw = this.pic.texture.width;
-        var sh = this.pic.texture.height;
-        var rect = new PIXI.Rectangle(0, 0, sw, sh);
-        var trim = new PIXI.Rectangle(0, 0, sh, sw);
-
-        // var trim;
-        
-        // if(this.rotation == 2 || this.rotation == 6){
-        //     trim = new PIXI.Rectangle(0, 0, sh, sw);
-        // }
-        // else{
-        //     trim = new PIXI.Rectangle(0, 0, sw, sh);
-        // }
-        var texture = new PIXI.Texture(this.pic.texture.baseTexture, rect, trim, trim, this.rotation);
-        this.resetGraphics(texture, this.pic);
+        this.frameView.reset(l, r, t, b);
     }
 
     rotateLeft(){
-        this.rotation = 2;
-        // if(this.rotation > 6){
-        //     this.rotation = 0;
-        // }
-        this.rotate();
+        this.imgCanvas = CanvasTooler.rotateCanvas(this.imgCanvas, -90);
+        this.texture = PIXI.Texture.from(this.imgCanvas);
+        this.pic.texture = this.texture;
+        if(this.texture.width > this.texture.height){
+            this.fitWidth();
+        }
+        else{
+            this.fitHeight();
+        }
     }
 
     rotateRight(){
-        this.rotation = 6;
-        // if(this.rotation < 0){
-        //     this.rotation = 6;
-        // }
-        this.rotate();
+        this.imgCanvas = CanvasTooler.rotateCanvas(this.imgCanvas, 90);
+        this.texture = PIXI.Texture.from(this.imgCanvas);
+        this.pic.texture = this.texture;
+        if(this.texture.width > this.texture.height){
+            this.fitWidth();
+        }
+        else{
+            this.fitHeight();
+        }
     }
 
     turnX(){
-
+        this.imgCanvas = CanvasTooler.scaleCanvas(this.imgCanvas, -1, 1);
+        this.texture = PIXI.Texture.from(this.imgCanvas);
+        this.pic.texture = this.texture;
     }
 
     turnY(){
-
-    }
-
-    test(){
-        var sw = this.texture.width;
-        var sh = this.texture.height;
-
-        var rect = new PIXI.Rectangle(0, 0, sw, sh);
-        var trim = new PIXI.Rectangle(0, 0, sh, sw);
-        // this.texture.rotate = 2;
-        // this.texture.frame = rect;
-
-        // var offset = [90, 90];
-        // var orig, trim;
-        // if (offset) {
-        //     orig = new PIXI.Rectangle(offset[0], offset[1], sw - offset[0], sh - offset[1]);
-        //     trim = new PIXI.Rectangle(-offset[0], -offset[1], sw, sh);
-        // }
-        this.rotation = 2;
-
-        var texture = new PIXI.Texture(this.texture.baseTexture, rect, trim, trim, this.rotation);
-        var sp = new PIXI.Sprite(texture);
-        this.container.addChild(sp);
-        console.log(texture, "texture");
-        console.log(sp, "sp");
-        console.log(this.pic, "this.pic");
-
-        this.resetGraphics(texture, this.pic);
-
+        this.imgCanvas = CanvasTooler.scaleCanvas(this.imgCanvas, 1, -1);
+        this.texture = PIXI.Texture.from(this.imgCanvas);
+        this.pic.texture = this.texture;
     }
     
     setup(texture:PIXI.Texture){
         this.texture = texture;   
         texture.baseTexture.wrapMode = PIXI.WRAP_MODES.REPEAT;
+        var w = this.texture.width;
+        var h = this.texture.height;
 
         this.pic = new PIXI.Sprite(texture);
-        
-        this.resetGraphics(texture, this.pic);
         console.log('pic', this.pic);
-
-        this.pic.interactive = true;
-        var w = texture.width;
-        var h = texture.height;
 
         // this.pic.anchor.set(0, 0);
         this.pic.position.set(this.width / 2 - w / 2, this.height / 2 - h / 2);
         this.container.addChild(this.pic);
 
-        this.editView = new EditView(this.width,this.height);
-        // this.editView.reset(30, 720, 30, 720);
-        this.container.addChild(this.editView);
+        this.frameView = new FrameView(this.width,this.height);
+        this.container.addChild(this.frameView);
 
-        this.scaleTooler = new ScaleTooler(this.editView, this.pic, this.texture);
-
-        // this.test();
-    }
-
-    resetGraphics(texture:PIXI.Texture, graphics: PIXI.Sprite){
-        console.log(texture, "texture====")
-        graphics.texture = texture;
-
-        // graphics.clear();
-        // graphics.beginTextureFill({texture: texture});
-        // graphics.drawRect(0, 0, texture.width, texture.height);
-        
-        // graphics.endFill();
+        this.scaleTooler = new ScaleTooler(this.frameView, this.pic);
     }
     
     onDraw(scale:number){
-        var {minX, maxX, minY, maxY} = this.editView.rect;
+        var {minX, maxX, minY, maxY} = this.frameView.rect;
         var x = minX - this.pic.x;
         var y = minY - this.pic.y;
         var width = maxX - minX;

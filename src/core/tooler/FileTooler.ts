@@ -25,6 +25,16 @@ export class FileTooler{
         })
     }
 
+    static getClipImage(img:any, x:number, y:number, width:number, height:number){
+        var canvas:HTMLCanvasElement = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        var ctx = canvas.getContext('2d');
+        ctx?.drawImage(img, x, y, width, height, 0, 0, width, height);
+        // document.body.appendChild(canvas);
+        return canvas;
+    }
+
     static getUrlCanvas(url:string){
         return new Promise(resolve => {
             var img = new Image();

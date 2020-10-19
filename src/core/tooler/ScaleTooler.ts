@@ -1,9 +1,10 @@
 import * as PIXI from 'pixi.js';
-import { EditView } from '../view/EditView';
+import FrameView from '../view/FrameView';
+import listener from '../listener'
 
-export class ScaleTooler{
+export default class ScaleTooler{
 
-    container:EditView;
+    frameView:FrameView;
     dragging:boolean;
     startPot:any;
     distance:number;
@@ -11,29 +12,27 @@ export class ScaleTooler{
     points:any[] = [];
     target:PIXI.Sprite;
     inFrame:Boolean;
-    texture:PIXI.Texture
 
-    constructor(container:EditView, target:PIXI.Sprite, texture:PIXI.Texture){
-        this.texture = texture;
-        this.container = container;
+    constructor(frameView:FrameView, target:PIXI.Sprite){
+        this.frameView = frameView;
         this.target = target;
 
-        this.container.interactive = true;
-        this.container.on('pointerdown', this.onDragStart.bind(this));
-        this.container.on('pointerup', this.onDragEnd, this);
-        this.container.on('pointerupoutside', this.onDragEnd, this);
-        this.container.on('pointermove', this.onDragMove, this);
+        this.frameView.interactive = true;
+        this.frameView.on('pointerdown', this.onDragStart.bind(this));
+        this.frameView.on('pointerup', this.onDragEnd, this);
+        this.frameView.on('pointerupoutside', this.onDragEnd, this);
+        this.frameView.on('pointermove', this.onDragMove, this);
     }
 
 
     onDragStart(e:any){
-        var local = e.data.getLocalPosition(this.container);
+        var local = e.data.getLocalPosition(this.frameView);
         this.dragging = true;
         this.startPot = local;
 
-        this.inFrame = this.container.hitFrame(e);
+        this.inFrame = this.frameView.hitFrame(e);
         this.points.push({
-            data: e.data.getLocalPosition(this.container),
+            data: e.data.getLocalPosition(this.frameView),
             global: e.data.global,
             id: e.data.identifier
         });
@@ -45,6 +44,8 @@ export class ScaleTooler{
 
     onDragMove(e:any){
         if(!this.dragging) return;
+
+        var ox, oy;
         if(this.points.length == 2){
             var size = this.getDistance(this.points[0].global, this.points[1].global);
             if(this.distance){
@@ -65,25 +66,31 @@ export class ScaleTooler{
                     scale = 2.4;
                 }
                 this.target.scale.set(scale, scale);
-                var ox = this.target.width - width;
-                var oy = this.target.height - height;
-                this.target.x -= ox * this.center.x / this.texture.width;
-                this.target.y -= oy * this.center.y / this.texture.height;
+                ox = this.target.width - width;
+                oy = this.target.height - height;
+                this.target.x -= ox * this.center.x / this.target.texture.width;
+                this.target.y -= oy * this.center.y / this.target.texture.height;
             }
             else{
                 this.distance = size;
             }
         }
         else{
-            var local = e.data.getLocalPosition(this.container);
-
+            var local = e.data.getLocalPosition(this.frameView);
+            ox = local.x - this.startPot.x;
+            oy = local.y - this.startPot.y;
             if(this.inFrame){
-                this.container.moveFrame(local.x - this.startPot.x, local.y - this.startPot.y);
+                this.frameView.moveFrame(ox, oy);
             }
             else{
-                this.target.x += local.x - this.startPot.x;
-                this.target.y += local.y - this.startPot.y;
-                console.log(this.target.x, "x")
+                if(this.target.visible){
+                    this.target.x += ox;
+                    this.target.y += oy;
+                }
+                else{
+                    //网页预处理截取拖动
+                    listener.emit("move", {x: ox, y: oy});
+                }
             }
             this.startPot = local;
         }

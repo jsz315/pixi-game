@@ -1,6 +1,7 @@
 <template>
     <div class="stage">
-        <canvas class="canvas" ref="canvas"></canvas>
+        <div class="bg" :style="style" :class="{'pre': hide}"></div>
+        <canvas class="canvas" :class="{hide}" ref="canvas"></canvas>
         <div class="control">
             <div class="btns">
                 <div class="box" @click="onChange('fitWidth')"><div class="ico size width"></div></div>
@@ -19,6 +20,9 @@
             
         </div>
         <div class="clip-btns">
+            <div class="clip btn" @click="preStart">预处理</div>
+            <div class="clip btn" @click="preCancel">×</div>
+            <div class="clip btn" @click="preEnd">√</div>
             <div class="clip btn" @click="clip">裁剪</div>
         </div>
 
@@ -64,6 +68,7 @@ let game;
 export default {
     data(){
         return {
+            hide: false,
             url: './logo.png',
             preview: false,
             blob: null,
@@ -77,7 +82,16 @@ export default {
                 {label: "30%", value: 0.3},
                 {label: "50%", value: 0.5},
                 {label: "70%", value: 0.7}
-            ]
+            ],
+            style: {},
+            pic: {
+                left: 0,
+                top: 0,
+                width: 0,
+                height: 0,
+                padding: 0
+            },
+            img: null,
         }
     },
     mounted(){
@@ -91,8 +105,72 @@ export default {
             this.info = info;
             console.log(info, "info");
         })
+
+        listener.on("move", offset => {
+            var {top, left, width, height, padding} = this.pic;
+
+            if(width > height){
+                left += offset.x;
+                if(left + width + padding < window.innerWidth){
+                    left = window.innerWidth - (width + padding);
+                }
+                else if(left > padding){
+                    left = padding;
+                }
+            }
+            else{
+                top += offset.y;
+                if(top + height + padding < window.innerWidth){
+                    top = window.innerWidth - (height + padding);
+                }
+                else if(top > padding){
+                    top = padding;
+                }
+            }
+
+            this.pic.left = left;
+            this.pic.top = top;
+
+            this.update();
+        });
+
+        listener.on("pre-div", rect => {
+            var left = rect.left;
+            var top = rect.top;
+            var width = rect.right - rect.left;
+            var height = rect.bottom - rect.top;
+            var padding = Math.min(left, top);
+
+            if(width > height){
+                width = this.img.width * height / this.img.height;
+            }
+            else{
+                height = this.img.height * width / this.img.width;
+            }
+
+            var r = window.innerWidth / 750;
+
+            width = width * r;
+            height = height * r;
+            left = left * r;
+            top = top * r;
+            padding = padding * r;
+
+            this.pic = {left, top, width, height, padding};
+            console.log(this.pic, "pic");
+            this.update();
+
+        });
     },
     methods: {
+        getQueryString(name) {
+            var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
+            var r = window.location.search.substr(1).match(reg);
+            if (r != null) {
+                return unescape(r[2]);
+            }
+            return null;
+        },
         quit(){
             this.preview = false;
         },
@@ -121,6 +199,55 @@ export default {
         },
         onChange(type){
             listener.emit("transform", type);
+        },
+        update(){
+            var obj = {
+                top: this.pic.top + "px",
+                left: this.pic.left + "px",
+                width: this.pic.width + "px",
+                height: this.pic.height + "px",
+            }
+            var style = Object.assign(this.style, obj);
+            this.style = style;
+        },
+        preEnd(){
+            var r = window.innerWidth / 750;
+            var {left, top, width, height} = this.pic;
+            listener.emit("preClip", {
+                left: left / r,
+                top: top / r,
+                width: width / r,
+                height: height / r,
+                img: this.img
+            });
+            listener.emit("preStart", false);
+            this.hide = false;
+        },
+        preCancel(){
+            listener.emit("preStart", false);
+            this.hide = false;
+        },
+        preStart(){
+            listener.emit("preStart", true);
+
+            this.hide = true;
+            var url = this.getQueryString("url");
+            this.style = {
+                backgroundImage: "url(" + url + ")",
+                left: 0,
+                top: 0,
+                width: 0,
+                height: 0
+            }
+
+            var img = new Image();
+            img.onload = () => {
+                this.img = img;
+
+                listener.emit("pre-scale", img.width > img.height);
+            }
+            img.src = url;
+            
         }
     },
 }

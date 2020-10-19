@@ -1,6 +1,28 @@
 .stage{
+    position: relative;
+    font-size: 0;
+    width: 750px;
+    height: 750px;
+    overflow: hidden;
     .canvas{
         width: 100%;
+        position: relative;
+        z-index: 1;
+        display: block;
+        &.hide{
+            opacity: 0.36;
+        }
+    }
+    .bg{
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+        position: absolute;
+        left: 0;
+        top: 0;
+        display: none;
+        &.pre{
+            display: block;
+        }
     }
     .control{
         display: flex;
