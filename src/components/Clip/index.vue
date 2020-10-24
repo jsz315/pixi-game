@@ -113,21 +113,21 @@ export default {
 
             if(width > height){
                 left += offset.x;
-                if(left + width + padding < window.innerWidth){
-                    left = window.innerWidth - (width + padding);
-                }
-                else if(left > padding){
-                    left = padding;
-                }
+                // if(left + width + padding < window.innerWidth){
+                //     left = window.innerWidth - (width + padding);
+                // }
+                // else if(left > padding){
+                //     left = padding;
+                // }
             }
             else{
                 top += offset.y;
-                if(top + height + padding < window.innerWidth){
-                    top = window.innerWidth - (height + padding);
-                }
-                else if(top > padding){
-                    top = padding;
-                }
+                // if(top + height + padding < window.innerWidth){
+                //     top = window.innerWidth - (height + padding);
+                // }
+                // else if(top > padding){
+                //     top = padding;
+                // }
             }
 
             this.pic.left = left;
