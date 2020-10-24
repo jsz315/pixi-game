@@ -20,10 +20,10 @@
             
         </div>
         <div class="clip-btns">
-            <div class="clip btn" @click="preStart">预处理</div>
-            <div class="clip btn" @click="preCancel">×</div>
-            <div class="clip btn" @click="preEnd">√</div>
-            <div class="clip btn" @click="clip">裁剪</div>
+            <div class="clip btn" @click="preStart" v-show="!inPre">预处理</div>
+            <div class="clip btn" @click="preCancel" v-show="inPre">×</div>
+            <div class="clip btn" @click="preEnd" v-show="inPre">√</div>
+            <div class="clip btn" @click="clip" v-show="!inPre">裁剪</div>
         </div>
 
         <div class="preview" v-if="preview">
@@ -68,6 +68,7 @@ let game;
 export default {
     data(){
         return {
+            inPre: false,
             hide: false,
             url: './logo.png',
             preview: false,
@@ -108,6 +109,7 @@ export default {
 
         listener.on("move", offset => {
             var {top, left, width, height, padding} = this.pic;
+            console.log("move pic");
 
             if(width > height){
                 left += offset.x;
@@ -222,15 +224,18 @@ export default {
             });
             listener.emit("preStart", false);
             this.hide = false;
+            this.inPre = false;
         },
         preCancel(){
             listener.emit("preStart", false);
             this.hide = false;
+            this.inPre = false;
         },
         preStart(){
             listener.emit("preStart", true);
 
             this.hide = true;
+            this.inPre = true;
             var url = this.getQueryString("url");
             this.style = {
                 backgroundImage: "url(" + url + ")",
