@@ -4,6 +4,8 @@ export default class CanvasTooler{
         return new Promise(resolve=>{
             var canvas = document.createElement("canvas");
             var img = new Image();
+            img.crossOrigin = '';
+            console.log(img.crossOrigin, "crossOrigin")
             img.onload = function(){
                 canvas.width = img.width;
                 canvas.height = img.height;

@@ -246,9 +246,9 @@ export default {
             }
 
             var img = new Image();
+            img.setAttribute("crossOrigin", '');
             img.onload = () => {
                 this.img = img;
-
                 listener.emit("pre-scale", img.width > img.height);
             }
             img.src = url;

@@ -16,12 +16,15 @@ export class BaseScene implements IScene{
     load(url:string):Promise<void>{
         return new Promise(resolve => {
             if(this.loader.resources[url]){
+                console.log("no load")
                 resolve();
             }
             else{
+                console.log("loading")
                 this.loader.add({
                     url: url,
-                    crossOrigin: ''
+                    //crossOrigin为空不等于anonymous
+                    crossOrigin: 'anonymous'
                 }).load(()=>{
                     resolve();
                 });

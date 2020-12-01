@@ -47,7 +47,9 @@ export class ClipTest extends BaseScene{
         var texture:any;
 
         if(url.startsWith("http")){
+            console.log("start load");
             await this.load(url);
+            console.log("over load");
             texture = this.loader.resources[url].texture;
         }
         else{

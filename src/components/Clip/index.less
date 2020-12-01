@@ -49,6 +49,9 @@
                 &:first-child{
                     border-right: 2px solid #ffffff;
                 }
+                &:active{
+                    background: darken(#069cff, 20%);
+                }
             }
         }
         .ico{
@@ -99,9 +102,15 @@
             cursor: pointer;
             border-radius: 16px;
             font-size: 32px;
+            &:active{
+                background: darken(#069cff, 20%);
+            }
         }
         .btn:last-child{
             background: #960000;
+            &:active{
+                background: darken(#960000, 20%);
+            }
         }
     }
     .preview{

@@ -38,6 +38,7 @@ export class FileTooler{
     static getUrlCanvas(url:string){
         return new Promise(resolve => {
             var img = new Image();
+            img.crossOrigin = '';
             img.onload = async function(e){
                 var canvas:HTMLCanvasElement = document.createElement('canvas');
                 var ctx = canvas.getContext('2d');
@@ -117,6 +118,8 @@ export class FileTooler{
 
     static getCanvas(url:string, angle:number){
         var img = new Image();
+        img.setAttribute("crossOrigin", "");
+        console.log(img.crossOrigin, "crossOrigin");
         img.onload = async function(e){
             var canvas:HTMLCanvasElement = document.createElement('canvas');
             var ctx = canvas.getContext('2d');
@@ -146,6 +149,8 @@ export class FileTooler{
     static isPng(url:string){
         return new Promise(resolve => {
             var img = new Image();
+            img.setAttribute("crossOrigin", "");
+            console.log(img.crossOrigin, "crossOrigin");
             img.onload = async function(e){
                 var canvas:any = document.createElement('canvas');
                 var ctx = canvas.getContext('2d');
