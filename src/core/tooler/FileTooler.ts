@@ -1,4 +1,4 @@
-import { resolveModuleName } from "typescript";
+import Common from "./Common";
 
 export class FileTooler{
 
@@ -146,42 +146,47 @@ export class FileTooler{
         img.src = url;
     }
 
-    static isPng(url:string){
-        return new Promise(resolve => {
-            var img = new Image();
-            img.setAttribute("crossOrigin", "");
-            console.log(img.crossOrigin, "crossOrigin");
-            img.onload = async function(e){
-                var canvas:any = document.createElement('canvas');
-                var ctx = canvas.getContext('2d');
-    
-                var w = Math.floor(img.width / 10);
-                var h = Math.floor(img.height / 10);
-               
-                canvas.width = w;
-                canvas.height = h;
-    
-                ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, w, h);
-                var imgData = ctx.getImageData(0, 0, w, h);
-                var png = false;
-                for(var i = 0; i < h; i++){
-                    var list = [];
-                    for(var j = 0; j < w; j++){
-                        var n = i * w * 4 + j * 4;
-                        if(imgData.data[n + 3] < 10){
-                            png = true;
-                            list.push(".");
-                        }
-                        else{
-                            list.push("m");
-                        }
-                    }
-                    console.log(list.join(""));
+    /**
+     * 判断图片是否为png，根据像素透明值判断
+     * @param url 图片链接，本地或远程
+     */
+    static async checkPng(url:string){
+        var timer = Date.now();
+        var img: any = await Common.loadImage(url);
+        
+        var canvas:any = document.createElement('canvas');
+        var ctx = canvas.getContext('2d');
+
+        var w = Math.floor(img.width / 10);
+        var h = Math.floor(img.height / 10);
+        
+        canvas.width = w;
+        canvas.height = h;
+
+        ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, w, h);
+        var imgData = ctx.getImageData(0, 0, w, h);
+        var isPng = false;
+        for(var i = 0; i < h; i++){
+            // var list = [];
+            for(var j = 0; j < w; j++){
+                var n = i * w * 4 + j * 4;
+                if(imgData.data[n + 3] < 10){
+                    isPng = true;
+                    break;
+                    // list.push(".");
                 }
-                resolve(png);
+                else{
+                    // list.push("m");
+                }
+                if(isPng){
+                    break;
+                }
             }
-            img.src = url;
-        })
+            // console.log(list.join(""));
+        }
+        var t = Date.now() - timer;
+        console.log(`check is png: ${isPng}, cost：${t}ms`);
+        return isPng;
         
     }
 

@@ -1,19 +1,27 @@
+import Common from "./Common";
+
 export default class CanvasTooler{
 
     static getCanvasByUrl(url:string){
-        return new Promise(resolve=>{
+        return new Promise(async resolve=>{
             var canvas = document.createElement("canvas");
-            var img = new Image();
-            img.crossOrigin = '';
-            console.log(img.crossOrigin, "crossOrigin")
-            img.onload = function(){
-                canvas.width = img.width;
-                canvas.height = img.height;
-                var ctx = canvas.getContext("2d");
-                ctx?.drawImage(img, 0, 0);
-                resolve(canvas);
-            }
-            img.src = url;
+            var img:any = await Common.loadImage(url);
+            canvas.width = img.width;
+            canvas.height = img.height;
+            var ctx = canvas.getContext("2d");
+            ctx?.drawImage(img, 0, 0);
+            resolve(canvas);
+            // var img = new Image();
+            // img.crossOrigin = '';
+            // console.log(img.crossOrigin, "crossOrigin")
+            // img.onload = function(){
+            //     canvas.width = img.width;
+            //     canvas.height = img.height;
+            //     var ctx = canvas.getContext("2d");
+            //     ctx?.drawImage(img, 0, 0);
+            //     resolve(canvas);
+            // }
+            // img.src = url;
         })
 
     }

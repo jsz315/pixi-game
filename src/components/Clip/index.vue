@@ -1,30 +1,43 @@
 <template>
-    <div class="stage">
-        <div class="bg" :style="style" :class="{'pre': hide}"></div>
-        <canvas class="canvas" :class="{hide}" ref="canvas"></canvas>
-        <div class="control">
-            <div class="btns">
-                <div class="box" @click="onChange('fitWidth')"><div class="ico size width"></div></div>
-                <div class="box" @click="onChange('fitHeight')"><div class="ico size height"></div></div>
+    <div class="page">
+
+        <div class="stage">
+            <div class="bg" :style="style" :class="{'pre': hide}"></div>
+            <canvas class="canvas" :class="{hide}" ref="canvas"></canvas>
+        </div>
+
+        <div class="bottom">
+
+            <div class="state">
+                <div class="tip">原始尺寸：{{originSize.width}}x{{originSize.height}}</div>
+                <div class="tip">裁剪尺寸：{{clipSize.width}}x{{clipSize.height}}</div>
             </div>
 
-            <div class="btns">
-                <div class="box" @click="onChange('rotateLeft')"><div class="ico rotate left"></div></div>
-                <div class="box" @click="onChange('rotateRight')"><div class="ico rotate right"></div></div>
-            </div>
+            <div class="control">
+                <div class="btns">
+                    <div class="box" @click="onChange('fitWidth')"><div class="ico size width"></div></div>
+                    <div class="box" @click="onChange('fitHeight')"><div class="ico size height"></div></div>
+                </div>
 
-            <div class="btns">
-                <div class="box" @click="onChange('turnX')"><div class="ico turn x"></div></div>
-                <div class="box" @click="onChange('turnY')"><div class="ico turn y"></div></div>
+                <div class="btns">
+                    <div class="box" @click="onChange('rotateLeft')"><div class="ico rotate left"></div></div>
+                    <div class="box" @click="onChange('rotateRight')"><div class="ico rotate right"></div></div>
+                </div>
+
+                <div class="btns">
+                    <div class="box" @click="onChange('turnX')"><div class="ico turn x"></div></div>
+                    <div class="box" @click="onChange('turnY')"><div class="ico turn y"></div></div>
+                </div>
+                
             </div>
-            
+            <div class="clip-btns">
+                <div class="clip btn" @click="preStart" v-show="!inPre">预处理</div>
+                <div class="clip btn" @click="preCancel" v-show="inPre">×</div>
+                <div class="clip btn" @click="preEnd" v-show="inPre">√</div>
+                <div class="clip btn" @click="clip" v-show="!inPre">裁剪</div>
+            </div>
         </div>
-        <div class="clip-btns">
-            <div class="clip btn" @click="preStart" v-show="!inPre">预处理</div>
-            <div class="clip btn" @click="preCancel" v-show="inPre">×</div>
-            <div class="clip btn" @click="preEnd" v-show="inPre">√</div>
-            <div class="clip btn" @click="clip" v-show="!inPre">裁剪</div>
-        </div>
+        
 
         <div class="preview" v-if="preview">
             <div class="box">
@@ -92,12 +105,31 @@ export default {
                 height: 0,
                 padding: 0
             },
+            originSize: {
+                width: 0,
+                height: 0
+            },
+            clipSize: {
+                width: 0,
+                height: 0
+            },
             img: null,
         }
     },
     mounted(){
         game = new Game(this.$refs.canvas);
         game.reset(new ClipTest);
+
+        listener.on("initSize", (w, h) => {
+            this.originSize.width = w;
+            this.originSize.height = h;
+        })
+
+        listener.on("clipSize", (w, h) => {
+            console.log("===========")
+            this.clipSize.width = w;
+            this.clipSize.height = h;
+        })
         
         listener.on("clipEnd", (url, blob, info)=>{
             this.preview = true;
@@ -113,21 +145,9 @@ export default {
 
             if(width > height){
                 left += offset.x;
-                // if(left + width + padding < window.innerWidth){
-                //     left = window.innerWidth - (width + padding);
-                // }
-                // else if(left > padding){
-                //     left = padding;
-                // }
             }
             else{
                 top += offset.y;
-                // if(top + height + padding < window.innerWidth){
-                //     top = window.innerWidth - (height + padding);
-                // }
-                // else if(top > padding){
-                //     top = padding;
-                // }
             }
 
             this.pic.left = left;
@@ -161,7 +181,6 @@ export default {
             this.pic = {left, top, width, height, padding};
             console.log(this.pic, "pic");
             this.update();
-
         });
     },
     methods: {

@@ -4,8 +4,8 @@ import FrameView from '../view/FrameView';
 import ScaleTooler from '../tooler/ScaleTooler';
 import listener from '../listener'
 import { FileTooler } from '../tooler/FileTooler';
-import { createTrue } from 'typescript';
 import CanvasTooler from '../tooler/CanvasTooler';
+import Common from '../tooler/Common';
 
 export class ClipTest extends BaseScene{
 
@@ -27,47 +27,33 @@ export class ClipTest extends BaseScene{
         super();
     }   
 
-    sleep(t:number){
-        return new Promise(resolve=>{
-            setTimeout(() => {
-                resolve();
-            }, t);
-        })
-    }
-
     async init(width:number, height:number, app:PIXI.Application){
         super.init(width, height, app);
 
-        var url = this.getQueryString("url");
-        console.log("裁剪图片", url);
+        var url = Common.getQueryString("url");
+        console.log("image url: ", url);
 
-        var res = await FileTooler.isPng(url);
-        console.log(res, 'png');
+        var res = await FileTooler.checkPng(url);
         this.png = !!res;
+
         var texture:any;
 
         if(url.startsWith("http")){
-            console.log("start load");
             await this.load(url);
-            console.log("over load");
             texture = this.loader.resources[url].texture;
         }
         else{
             texture = PIXI.Texture.from(url);
         }
-
+       
         this.imgCanvas = await CanvasTooler.getCanvasByUrl(url);
+        await Common.checkTexture(texture);
 
-        this.times = 0;
-        while(++this.times < 30){
-            await this.sleep(30);
-            console.log("time" + this.times, texture.width);
-            if(texture.width > 10){
-                this.times = 30;
-            }
-        }
         this.setup(texture);
+        this.addListeners();
+    }
 
+    addListeners(){
         listener.on("preStart", (v:boolean) => {
             if(v){
                 this.pic.visible = false;
@@ -99,6 +85,7 @@ export class ClipTest extends BaseScene{
             var div = FileTooler.getClipImage(img, x, y, w, h);
             // document.body.appendChild(div);
             this.imgCanvas = div;
+            listener.emit("clipSize", w, h);
             this.texture = PIXI.Texture.from(this.imgCanvas);
             this.pic.texture = this.texture;
             if(w > h){
@@ -142,15 +129,7 @@ export class ClipTest extends BaseScene{
             
         })
     }
-
-    getQueryString(name:string):any {
-        var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
-        var r = window.location.search.substr(1).match(reg);
-        if (r != null) {
-          return unescape(r[2]);
-        }
-        return null;
-    }
+   
 
     fitWidth() {
         var p = this.frameView.padding;
@@ -186,8 +165,10 @@ export class ClipTest extends BaseScene{
 
     rotateLeft(){
         this.imgCanvas = CanvasTooler.rotateCanvas(this.imgCanvas, -90);
+        
         this.texture = PIXI.Texture.from(this.imgCanvas);
         this.pic.texture = this.texture;
+        listener.emit("clipSize", this.texture.width, this.texture.height);
         if(this.texture.width > this.texture.height){
             this.fitWidth();
         }
@@ -200,6 +181,7 @@ export class ClipTest extends BaseScene{
         this.imgCanvas = CanvasTooler.rotateCanvas(this.imgCanvas, 90);
         this.texture = PIXI.Texture.from(this.imgCanvas);
         this.pic.texture = this.texture;
+        listener.emit("clipSize", this.texture.width, this.texture.height);
         if(this.texture.width > this.texture.height){
             this.fitWidth();
         }
@@ -212,12 +194,14 @@ export class ClipTest extends BaseScene{
         this.imgCanvas = CanvasTooler.scaleCanvas(this.imgCanvas, -1, 1);
         this.texture = PIXI.Texture.from(this.imgCanvas);
         this.pic.texture = this.texture;
+        listener.emit("clipSize", this.texture.width, this.texture.height);
     }
 
     turnY(){
         this.imgCanvas = CanvasTooler.scaleCanvas(this.imgCanvas, 1, -1);
         this.texture = PIXI.Texture.from(this.imgCanvas);
         this.pic.texture = this.texture;
+        listener.emit("clipSize", this.texture.width, this.texture.height);
     }
     
     setup(texture:PIXI.Texture){
@@ -227,9 +211,8 @@ export class ClipTest extends BaseScene{
         var h = this.texture.height;
 
         this.pic = new PIXI.Sprite(texture);
-        console.log('pic', this.pic);
+        listener.emit("initSize", w, h);
 
-        // this.pic.anchor.set(0, 0);
         this.pic.position.set(this.width / 2 - w / 2, this.height / 2 - h / 2);
         this.container.addChild(this.pic);
 
@@ -254,8 +237,8 @@ export class ClipTest extends BaseScene{
             this.canvas = document.createElement('canvas');
         }
         let canvas = this.canvas;
-        canvas.width = width / s * scale;
-        canvas.height = height / s * scale;
+        canvas.width = Math.floor(width / s * scale);
+        canvas.height = Math.floor(height / s * scale);
 
         let ctx:any = canvas.getContext('2d');
         ctx.drawImage(img.source, x / s, y / s, width / s, height / s, 0, 0, canvas.width, canvas.height);
