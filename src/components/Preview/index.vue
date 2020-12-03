@@ -6,8 +6,9 @@
             </div>
 
             <div class="info" v-if="info">
-                <div class="tip">原始尺寸：{{info.originSize.width}}x{{info.originSize.height}}</div>
+                <!-- <div class="tip">裁剪尺寸：{{info.originSize.width}}x{{info.originSize.height}}</div> -->
                 <div class="tip">裁剪尺寸：{{info.clipSize.width}}x{{info.clipSize.height}}</div>
+                <div class="tip">缩放尺寸：{{info.originSize.width}}x{{info.originSize.height}}</div>
             </div>
 
             <div class="scale">

@@ -159,6 +159,8 @@ export class ImageCliper extends BaseScene{
         var t = w > h ? this.pic.position.y : p;
         var b = w > h ? this.height - this.pic.position.y : this.height - p;
         this.scaleView.frameView.reset(l, r, t, b);
+
+        listener.emit("clipSize", w, (b - t) * s);
     }
 
     fitHeight(){
@@ -175,6 +177,8 @@ export class ImageCliper extends BaseScene{
         var t = p;
         var b = this.height - p;
         this.scaleView.frameView.reset(l, r, t, b);
+
+        listener.emit("clipSize", (r - l) / s, h);
     }
 
     rotateLeft(){
