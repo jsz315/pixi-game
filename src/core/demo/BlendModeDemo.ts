@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
-import { BaseScene } from './BaseScene';
+import { BaseScene } from '../BaseScene';
 
-export class BlendModeTest extends BaseScene{
+export class BlendModeDemo extends BaseScene{
     
     dragItem:PIXI.Sprite;
     url:string = 'man.jpg';

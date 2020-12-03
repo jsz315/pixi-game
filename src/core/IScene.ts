@@ -5,5 +5,4 @@ export interface IScene{
     init(width:number, height:number, app:PIXI.Application):void;
     destory():void;
     update():void;
-
 }

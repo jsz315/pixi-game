@@ -1,6 +1,8 @@
 import * as PIXI from 'pixi.js';
-import listener from '../listener'
 
+/**
+ * 四边框和拖动控制点视图
+ */
 export default class FrameView extends PIXI.Container{
     
     dragItem:PIXI.Graphics;
@@ -46,23 +48,19 @@ export default class FrameView extends PIXI.Container{
             p.on('pointerdown', this.onDragStart.bind(this));
         }
 
-        listener.on("pre-scale", (horizontal:boolean) => {
-            var size = (w - 2 * this.padding) / 2.4;
-            if(horizontal){
-                this.reset(this.padding, w - this.padding, size, h - size);
-            }
-            else{
-                this.reset(size, w - size, this.padding, h - this.padding);
-            }
-            listener.emit("pre-div", {
-                left: this.rect.minX,
-                right: this.rect.maxX,
-                top: this.rect.minY,
-                bottom: this.rect.maxY
-            })
-        })
-
         this.reset(this.padding, w - this.padding, this.padding, h - this.padding);
+    }
+
+    init(horizontal:boolean){
+        var w = this.stageWidth;
+        var h = this.stageHeight;
+        var size = (w - 2 * this.padding) / 2.4;
+        if(horizontal){
+            this.reset(this.padding, w - this.padding, size, h - size);
+        }
+        else{
+            this.reset(size, w - size, this.padding, h - this.padding);
+        }
     }
 
     checkNearPointer(p:any){
@@ -202,6 +200,8 @@ export default class FrameView extends PIXI.Container{
 
             this.clipWidth = this.rect.maxX - this.rect.minX;
             this.clipHeight = this.rect.maxY - this.rect.minY;
+            
+            this.emit("size", {width: this.clipWidth, height: this.clipHeight});
 
             this.startPot = {x: local.x, y:local.y};
             this.update();

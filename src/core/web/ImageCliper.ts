@@ -1,20 +1,20 @@
 import * as PIXI from 'pixi.js';
-import { BaseScene } from './BaseScene';
-import FrameView from '../view/FrameView';
-import ScaleTooler from '../tooler/ScaleTooler';
+import { BaseScene } from '../BaseScene';
 import listener from '../listener'
-import { FileTooler } from '../tooler/FileTooler';
 import CanvasTooler from '../tooler/CanvasTooler';
-import Common from '../tooler/Common';
+import CommonTooler from '../tooler/CommonTooler';
+import ConvertTooler from '../tooler/ConvertTooler';
+import ScaleView from '../view/ScaleView';
 
-export class ClipTest extends BaseScene{
+export class ImageCliper extends BaseScene{
 
     pic:PIXI.Sprite;
     texture:PIXI.Texture;
     dragging:boolean;
     startPot:any;
-    frameView:FrameView;
-    scaleTooler:ScaleTooler;
+    // frameView:FrameView;
+    // scaleTooler:ScaleTooler;
+    scaleView:ScaleView;
     line: PIXI.Graphics;
     canvas:HTMLCanvasElement;
     png:boolean;
@@ -30,10 +30,10 @@ export class ClipTest extends BaseScene{
     async init(width:number, height:number, app:PIXI.Application){
         super.init(width, height, app);
 
-        var url = Common.getQueryString("url");
+        var url = CommonTooler.getQueryString("url");
         console.log("image url: ", url);
 
-        var res = await FileTooler.checkPng(url);
+        var res = await CommonTooler.checkPng(url);
         this.png = !!res;
 
         var texture:any;
@@ -47,27 +47,23 @@ export class ClipTest extends BaseScene{
         }
        
         this.imgCanvas = await CanvasTooler.getCanvasByUrl(url);
-        await Common.checkTexture(texture);
+        await CommonTooler.checkTexture(texture);
 
         this.setup(texture);
         this.addListeners();
     }
 
     addListeners(){
-        listener.on("preStart", (v:boolean) => {
-            if(v){
-                this.pic.visible = false;
-            }
-            else{
-                this.pic.visible = true;
-            }
-        });
+        //长图使用dom截取完成
+        listener.on("endDom", (rect:any) => {
+            this.pic.visible = true;
 
-        listener.on("preClip", (rect:any) => {
-            var {left, top, width, height, padding, img} = rect;
-            console.log(rect, "rect");
-            console.log(this.frameView.rect, "this.frameView.rect");
-            var {maxX, maxY, minX, minY} = this.frameView.rect;
+            if(!rect){
+                return;
+            }
+
+            var {left, top, width, height, img} = rect;
+            var {maxX, maxY, minX, minY} = this.scaleView.frameView.rect;
 
             var scale;
             if(width > height){
@@ -82,7 +78,7 @@ export class ClipTest extends BaseScene{
             var w = (maxX - minX) * scale;
             var h = (maxY - minY) * scale;
 
-            var div = FileTooler.getClipImage(img, x, y, w, h);
+            var div = CanvasTooler.getClipCanvas(img, x, y, w, h);
             // document.body.appendChild(div);
             this.imgCanvas = div;
             listener.emit("clipSize", w, h);
@@ -97,10 +93,28 @@ export class ClipTest extends BaseScene{
 
         })
 
-        listener.on("clipStart", (scale:number)=>{
+        //长图使用dom初始化
+        listener.on("startDom", (horizontal:boolean, callback:Function) => {
+            this.pic.visible = false;
+
+            this.scaleView.frameView.init(horizontal);
+            var rect = this.scaleView.frameView.rect;
+
+            callback({
+                left: rect.minX,
+                right: rect.maxX,
+                top: rect.minY,
+                bottom: rect.maxY
+            })
+        })
+
+        //裁剪预览
+        listener.on("clipPreview", (scale:number)=>{
             console.log(scale, "scale");
             this.onDraw(scale);
         })
+
+        //图片变换
         listener.on("transform", (key:string)=>{
             switch(key){
                 case "fitWidth":
@@ -132,7 +146,7 @@ export class ClipTest extends BaseScene{
    
 
     fitWidth() {
-        var p = this.frameView.padding;
+        var p = this.scaleView.frameView.padding;
         var w = this.texture.width;
         var h = this.texture.height;
         var s = (this.width - 2 * p) / w;
@@ -144,11 +158,11 @@ export class ClipTest extends BaseScene{
         var r = this.width - p;
         var t = w > h ? this.pic.position.y : p;
         var b = w > h ? this.height - this.pic.position.y : this.height - p;
-        this.frameView.reset(l, r, t, b);
+        this.scaleView.frameView.reset(l, r, t, b);
     }
 
     fitHeight(){
-        var p = this.frameView.padding;
+        var p = this.scaleView.frameView.padding;
         var w = this.texture.width;
         var h = this.texture.height;
         var s = (this.height - 2 * p) / h;
@@ -160,11 +174,11 @@ export class ClipTest extends BaseScene{
         var r =  w > h ? this.width - p : this.width - this.pic.position.x;
         var t = p;
         var b = this.height - p;
-        this.frameView.reset(l, r, t, b);
+        this.scaleView.frameView.reset(l, r, t, b);
     }
 
     rotateLeft(){
-        this.imgCanvas = CanvasTooler.rotateCanvas(this.imgCanvas, -90);
+        this.imgCanvas = CanvasTooler.getRotateCanvas(this.imgCanvas, -90);
         
         this.texture = PIXI.Texture.from(this.imgCanvas);
         this.pic.texture = this.texture;
@@ -178,7 +192,7 @@ export class ClipTest extends BaseScene{
     }
 
     rotateRight(){
-        this.imgCanvas = CanvasTooler.rotateCanvas(this.imgCanvas, 90);
+        this.imgCanvas = CanvasTooler.getRotateCanvas(this.imgCanvas, 90);
         this.texture = PIXI.Texture.from(this.imgCanvas);
         this.pic.texture = this.texture;
         listener.emit("clipSize", this.texture.width, this.texture.height);
@@ -191,14 +205,14 @@ export class ClipTest extends BaseScene{
     }
 
     turnX(){
-        this.imgCanvas = CanvasTooler.scaleCanvas(this.imgCanvas, -1, 1);
+        this.imgCanvas = CanvasTooler.getScaleCanvas(this.imgCanvas, -1, 1);
         this.texture = PIXI.Texture.from(this.imgCanvas);
         this.pic.texture = this.texture;
         listener.emit("clipSize", this.texture.width, this.texture.height);
     }
 
     turnY(){
-        this.imgCanvas = CanvasTooler.scaleCanvas(this.imgCanvas, 1, -1);
+        this.imgCanvas = CanvasTooler.getScaleCanvas(this.imgCanvas, 1, -1);
         this.texture = PIXI.Texture.from(this.imgCanvas);
         this.pic.texture = this.texture;
         listener.emit("clipSize", this.texture.width, this.texture.height);
@@ -216,21 +230,35 @@ export class ClipTest extends BaseScene{
         this.pic.position.set(this.width / 2 - w / 2, this.height / 2 - h / 2);
         this.container.addChild(this.pic);
 
-        this.frameView = new FrameView(this.width,this.height);
-        this.container.addChild(this.frameView);
+        this.scaleView = new ScaleView(this.width, this.height, this.pic);
+        this.container.addChild(this.scaleView);
 
-        this.scaleTooler = new ScaleTooler(this.frameView, this.pic);
+        this.scaleView.on("move", (data:any) => {
+            listener.emit("move", data);
+        })
+
+        this.scaleView.frameView.on("size", (data:any) => {
+            //pixi截图模式
+            if(this.pic.visible){
+                var {x, y} = this.pic.scale;
+                listener.emit("clipSize", data.width / x, data.height / y);
+            }
+            //dom截图模式
+            else{
+                listener.emit("domSize", data.width, data.height);
+            }
+            
+        })
     }
     
     onDraw(scale:number){
-        var {minX, maxX, minY, maxY} = this.frameView.rect;
+        var {minX, maxX, minY, maxY} = this.scaleView.frameView.rect;
         var x = minX - this.pic.x;
         var y = minY - this.pic.y;
         var width = maxX - minX;
         var height = maxY - minY;
         var s = this.pic.scale.x;
 
-        console.log(this.pic, "this.pic");
         var img:any = this.texture.baseTexture.resource;
 
         if(!this.canvas){
@@ -250,7 +278,7 @@ export class ClipTest extends BaseScene{
             urlData = canvas.toDataURL("image/jpeg", 0.8);
         }
 
-        var blob = FileTooler.dataURLtoBlob(urlData);
+        var blob = ConvertTooler.dataURLtoBlob(urlData);
         var url = urlData;
         var info = {
             originSize: {

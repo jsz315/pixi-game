@@ -1,5 +1,5 @@
 <template>
-    <div class="stage">
+    <div class="page">
         <div class="title">{{name}}</div>
         <canvas class="canvas" ref="canvas"></canvas>
         <div class="btns">
@@ -11,16 +11,15 @@
 </template>
 
 <script>
-import {Game} from '../../core/demo/Game'
-import {SpriteTest} from '../../core/demo/SpriteTest'
-import {PositionTest} from '../../core/demo/PositionTest'
-import {ShapeTest} from '../../core/demo/ShapeTest'
-import {TextTest} from '../../core/demo/TextTest'
-import {DragTest} from '../../core/demo/DragTest'
-import {ScaleTest} from '../../core/demo/ScaleTest'
-import {BlendModeTest} from '../../core/demo/BlendModeTest'
-import {ClipTest} from '../../core/demo/ClipTest'
-import {TextureTest} from '../../core/demo/TextureTest'
+import {Game} from '../../core/Game'
+import {SpriteDemo} from '../../core/demo/SpriteDemo'
+import {PositionDemo} from '../../core/demo/PositionDemo'
+import {ShapeDemo} from '../../core/demo/ShapeDemo'
+import {TextDemo} from '../../core/demo/TextDemo'
+import {DragDemo} from '../../core/demo/DragDemo'
+import {ScaleDemo} from '../../core/demo/ScaleDemo'
+import {BlendModeDemo} from '../../core/demo/BlendModeDemo'
+import {TextureDemo} from '../../core/demo/TextureDemo'
 
 import listener from '../../core/listener'
 
@@ -33,39 +32,35 @@ export default {
             list: [
                 {
                     name: '贴图',
-                    component: TextureTest
-                },
-                {
-                    name: '裁剪图片',
-                    component: ClipTest
+                    component: TextureDemo
                 },
                 {
                     name: 'Sprite中心点',
-                    component: SpriteTest
+                    component: SpriteDemo
                 },
                 {
                     name: 'Position坐标转换',
-                    component: PositionTest
+                    component: PositionDemo
                 },
                 {
                     name: 'Shape画图',
-                    component: ShapeTest
+                    component: ShapeDemo
                 },
                 {
                     name: 'Text文字',
-                    component: TextTest
+                    component: TextDemo
                 },
                 {
                     name: '拖动物体',
-                    component: DragTest
+                    component: DragDemo
                 },
                 {
                     name: '缩放物体',
-                    component: ScaleTest
+                    component: ScaleDemo
                 },
                 {
                     name: '混合模式',
-                    component: BlendModeTest
+                    component: BlendModeDemo
                 },
             ]
         }

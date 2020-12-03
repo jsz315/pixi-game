@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
-import { BaseScene } from './BaseScene';
+import { BaseScene } from '../BaseScene';
 
-export class ShapeTest extends BaseScene{
+export class ShapeDemo extends BaseScene{
     
     man:PIXI.Sprite;
     url:string = 'man.jpg';

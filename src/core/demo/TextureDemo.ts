@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
-import { BaseScene } from './BaseScene';
+import { BaseScene } from '../BaseScene';
 
-export class TextureTest extends BaseScene{
+export class TextureDemo extends BaseScene{
     box:PIXI.Container;
     constructor(){
         super();

@@ -1,9 +1,12 @@
 import * as PIXI from 'pixi.js';
-import FrameView from '../view/FrameView';
+import FrameView from './FrameView';
 import listener from '../listener'
+import CommonTooler from '../tooler/CommonTooler';
 
-export default class ScaleTooler{
-
+/**
+ * 四边框和拖动控制点视图
+ */
+export default class ScaleView extends PIXI.Container{
     frameView:FrameView;
     dragging:boolean;
     startPot:any;
@@ -13,9 +16,12 @@ export default class ScaleTooler{
     target:PIXI.Sprite;
     inFrame:Boolean;
 
-    constructor(frameView:FrameView, target:PIXI.Sprite){
-        this.frameView = frameView;
+    constructor(w:number, h:number, target:PIXI.Sprite){
+        super();
+
         this.target = target;
+        this.frameView = new FrameView(w, h);
+        this.addChild(this.frameView);
 
         this.frameView.interactive = true;
         this.frameView.on('pointerdown', this.onDragStart.bind(this));
@@ -23,7 +29,6 @@ export default class ScaleTooler{
         this.frameView.on('pointerupoutside', this.onDragEnd, this);
         this.frameView.on('pointermove', this.onDragMove, this);
     }
-
 
     onDragStart(e:any){
         var local = e.data.getLocalPosition(this.frameView);
@@ -38,7 +43,7 @@ export default class ScaleTooler{
         });
 
         if(this.points.length == 2){
-            this.center = this.getCenter(this.points[0].data, this.points[1].data);
+            this.center = CommonTooler.getCenter(this.points[0].data, this.points[1].data);
         }
     }
 
@@ -46,8 +51,9 @@ export default class ScaleTooler{
         if(!this.dragging) return;
 
         var ox, oy;
+        //两指缩放
         if(this.points.length == 2){
-            var size = this.getDistance(this.points[0].global, this.points[1].global);
+            var size = CommonTooler.getDistance(this.points[0].global, this.points[1].global);
             if(this.distance){
                 var width = this.target.width;
                 var height = this.target.height;
@@ -75,21 +81,24 @@ export default class ScaleTooler{
                 this.distance = size;
             }
         }
+        //单指移动
         else{
             var local = e.data.getLocalPosition(this.frameView);
             ox = local.x - this.startPot.x;
             oy = local.y - this.startPot.y;
+            //在操作框内则移动操作框
             if(this.inFrame){
                 this.frameView.moveFrame(ox, oy);
             }
             else{
+                //不使用dom截图则直接移动图片
                 if(this.target.visible){
                     this.target.x += ox;
                     this.target.y += oy;
                 }
+                //使用dom截图发送事件控制元素移动
                 else{
-                    //网页预处理截取拖动
-                    listener.emit("move", {x: ox, y: oy});
+                    this.emit("move", {x: ox, y: oy});
                 }
             }
             this.startPot = local;
@@ -104,15 +113,5 @@ export default class ScaleTooler{
             this.center = null;
         }
     }
-
-    getDistance(a:any, b:any){
-        return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
-    }
-
-    getCenter(a:any, b:any){
-        return {
-            x: (a.x + b.x) / 2,
-            y: (a.y + b.y) / 2
-        }
-    }
 }
+    

@@ -1,17 +1,17 @@
 <template>
   <div id="app">
-    <Clip/>
+    <Web/>
   </div>
 </template>
 
 <script>
-// import Stage from './components/Stage'
-import Clip from './components/Clip'
+// import Demo from './pages/Demo'
+import Web from './pages/Web'
 
 export default {
   name: 'App',
   components: {
-    Clip
+    Web
   }
 }
 </script>

@@ -1,39 +1,36 @@
-import Common from "./Common";
+import CommonTooler from "./CommonTooler";
 
 export default class CanvasTooler{
 
-    static getCanvasByUrl(url:string){
-        return new Promise(async resolve=>{
-            var canvas = document.createElement("canvas");
-            var img:any = await Common.loadImage(url);
-            canvas.width = img.width;
-            canvas.height = img.height;
-            var ctx = canvas.getContext("2d");
-            ctx?.drawImage(img, 0, 0);
-            resolve(canvas);
-            // var img = new Image();
-            // img.crossOrigin = '';
-            // console.log(img.crossOrigin, "crossOrigin")
-            // img.onload = function(){
-            //     canvas.width = img.width;
-            //     canvas.height = img.height;
-            //     var ctx = canvas.getContext("2d");
-            //     ctx?.drawImage(img, 0, 0);
-            //     resolve(canvas);
-            // }
-            // img.src = url;
-        })
-
+    //根据图片获取裁剪内容的离线画布
+    static getClipCanvas(img:any, x:number, y:number, width:number, height:number){
+        var canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        var ctx = canvas.getContext('2d');
+        ctx?.drawImage(img, x, y, width, height, 0, 0, width, height);
+        return canvas;
     }
 
-    static scaleCanvas(img:HTMLCanvasElement, x:number, y:number){
+    //根据图片链接获取原始内容的离线画布
+    static async getCanvasByUrl(url:string){
+        var canvas = document.createElement("canvas");
+        var img:any = await CommonTooler.loadImage(url);
+        canvas.width = img.width;
+        canvas.height = img.height;
+        var ctx = canvas.getContext("2d");
+        ctx?.drawImage(img, 0, 0);
+        return canvas;
+    }
+
+    //根据图片获取缩放内容的离线画布
+    static getScaleCanvas(img:HTMLCanvasElement, x:number, y:number){
         var canvas = document.createElement("canvas");
         canvas.width = img.width * Math.abs(x);
         canvas.height = img.height * Math.abs(y);
         var ctx = canvas.getContext("2d");
 
         ctx?.save();
-        // ctx?.translate(-img.width / 2, -img.height / 2)
         ctx?.scale(x, y);
         
         ctx?.drawImage(
@@ -45,7 +42,8 @@ export default class CanvasTooler{
         return canvas;
     }
 
-    static rotateCanvas(img:HTMLCanvasElement, angle:number){
+    //根据图片获取旋转内容的离线画布
+    static getRotateCanvas(img:HTMLCanvasElement, angle:number){
         var canvas = document.createElement("canvas");
         if(angle == 90 || angle == -90){
             canvas.width = img.height;
@@ -54,7 +52,6 @@ export default class CanvasTooler{
         var ctx = canvas.getContext("2d");
 
         ctx?.save();
-        // ctx?.translate(-img.width / 2, -img.height / 2)
         ctx?.rotate(angle * Math.PI / 180);
         if(angle == 90){
             ctx?.translate(0, -img.height);
