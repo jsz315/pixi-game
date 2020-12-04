@@ -75,6 +75,9 @@ export default {
                 height: 0
             },
             img: null,
+            url: "", 
+            blob: null, 
+            info: null
         }
     },
     components: {Preview},
@@ -96,8 +99,10 @@ export default {
         
         //裁剪完成
         listener.on("clipEnd", (url, blob, info)=>{
+            this.url = url;
+            this.blob = blob;
+            this.info = info;
             this.$refs.preview.show(url, info);
-            console.log(info, "info");
         })
 
         //dom截图模式框尺寸变换
@@ -126,7 +131,13 @@ export default {
         });
     },
     methods: {
-        onSure(data){
+        onSure(){
+            var data = {
+                type: "complete",
+                url: this.url,
+                blob: this.blob,
+                info: this.info
+            }
             console.log("clip complete", data);
             window.parent.postMessage(data);
         },
@@ -178,19 +189,16 @@ export default {
                     img: this.img
                 };
             }
+            else{
+                this.onTransform('fitWidth');
+            }
             
             listener.emit("endDom", param);
-            // this.hide = false;
-            // this.inPre = false;
             this.useDom = false;
         },
 
         //始使用dom图片
         async onStartDom(){
-            // listener.emit("preStart", true);
-
-            // this.hide = true;
-            // this.inPre = true;
             this.useDom = true;
 
             var url = CommonTooler.getQueryString("url");

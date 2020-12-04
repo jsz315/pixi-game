@@ -285,10 +285,6 @@ export class ImageCliper extends BaseScene{
         var blob = ConvertTooler.dataURLtoBlob(urlData);
         var url = urlData;
         var info = {
-            originSize: {
-                width: this.texture.width,
-                height: this.texture.height
-            },
             clipSize: {
                 width: canvas.width,
                 height: canvas.height
