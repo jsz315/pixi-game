@@ -31,10 +31,10 @@
                 
             </div>
             <div class="clip-btns">
-                <div class="clip btn" @click="onStartDom" v-show="!useDom">预处理</div>
+                <div class="clip btn" @click="onStartDom" v-show="!useDom"><div class="ico web"></div>预处理</div>
                 <div class="clip btn" @click="onEndDom(false)" v-show="useDom">×</div>
                 <div class="clip btn" @click="onEndDom(true)" v-show="useDom">√</div>
-                <div class="clip btn" @click="onClip" v-show="!useDom">裁剪</div>
+                <div class="clip btn" @click="onClip" v-show="!useDom"><div class="ico cut"></div>裁剪</div>
             </div>
         </div>
         
@@ -146,7 +146,7 @@ export default {
         onScale(obj){
             // this.scaleId = n;
             if(obj.value == 750){
-                listener.emit("clipPreview", obj.value / this.originSize.width);
+                listener.emit("clipPreview", obj.value / this.clipSize.width);
             }
             else{
                 listener.emit("clipPreview", obj.value);

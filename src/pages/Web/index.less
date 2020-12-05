@@ -47,7 +47,7 @@
     // bottom: 160px;
     width: 100%;
     padding-bottom: 20px;
-    border-bottom: solid 1px #f0f0f0;
+    border-bottom: solid 12px #f0f0f0;
     margin-bottom: 10px;
     .btns{
         margin: 0 20px;
@@ -117,9 +117,24 @@
         padding: 20px;
         cursor: pointer;
         border-radius: 16px;
-        font-size: 32px;
+        font-size: 28px;
         &:active{
             background: darken(#069cff, 20%);
+        }
+
+        .ico{
+            width: 30px;
+            height: 30px;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 100% 100%;
+            margin-right: 12px;
+            &.web{
+                background-image: url("../../assets/web.png");
+            }
+            &.cut{
+                background-image: url("../../assets/cut.png");
+            }
         }
     }
     .btn:last-child{
